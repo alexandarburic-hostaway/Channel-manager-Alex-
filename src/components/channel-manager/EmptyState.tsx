@@ -1,0 +1,39 @@
+export interface EmptyStateProps {
+  onConnectAccount: () => void
+}
+
+export function EmptyState({ onConnectAccount }: EmptyStateProps) {
+  return (
+    <div className="flex w-full flex-1 min-h-0 items-center justify-center px-6 py-8">
+      <div className="flex max-w-[360px] flex-col items-center text-center">
+        <div className="relative w-[292px] h-[292px] flex items-center justify-center">
+          <div className="absolute inset-0 rounded-full border border-[#f2f4f7]" />
+          <div className="absolute inset-[22px] rounded-full border border-[#f2f4f7]" />
+          <div className="absolute inset-[44px] rounded-full border border-[#f2f4f7]" />
+          <div className="absolute inset-[66px] rounded-full border border-[#f2f4f7]" />
+          <div className="absolute inset-[88px] rounded-full border border-[#f2f4f7]" />
+          <div className="absolute inset-[110px] rounded-full border border-[#f2f4f7]" />
+          <div className="w-12 h-12 rounded-xl border border-[#d5d7da] bg-white flex items-center justify-center shadow-[0px_1px_2px_rgba(10,13,18,0.05)]">
+            <svg className="w-5 h-5 text-[#667085]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M10 13a5 5 0 007.07 0l1.4-1.4a5 5 0 10-7.07-7.07L10 6" />
+              <path d="M14 11a5 5 0 00-7.07 0l-1.4 1.4a5 5 0 007.07 7.07L14 18" />
+            </svg>
+          </div>
+        </div>
+        <h2 className="mt-2 text-[16px] leading-6 font-semibold text-[#181d27]">Connect your first account</h2>
+        <p className="mt-2 text-[14px] leading-5 text-[#535862]">
+          This text explains the value of channel connection.
+        </p>
+        <button
+          onClick={onConnectAccount}
+          className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-sm bg-[#181d27] text-white h-9 px-3 text-sm leading-5"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          Connect account
+        </button>
+      </div>
+    </div>
+  )
+}

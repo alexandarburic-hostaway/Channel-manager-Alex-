@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Figma: Channel Manager - Empty state & header tabs */
+    --figma-bg: #fff7f2;
+    --figma-text: #181d27;
+    --figma-text-muted: #535861;
+    --figma-text-tab-inactive: #717680;
+    --figma-badge-active: #008380;
+    --figma-badge-active-bg: #f2fcfb;
+    --figma-badge-inactive: #414651;
+    --figma-badge-inactive-bg: #fafafa;
+    --figma-divider: #e8e9ec;
+    --figma-stroke: #e9e9eb;
+    --figma-icon-muted: #717680;
+    --background: 15 100% 97%;
+    --foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+html {
+  @apply h-full;
+}
+body {
+  @apply h-full text-foreground antialiased;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--figma-bg);
+}
+#root {
+  @apply h-full;
+}
+
+@keyframes status-badge-swap {
+  0% {
+    opacity: 0.85;
+    transform: translateY(1px) scale(0.98);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(0) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes status-badge-icon-swap {
+  0% {
+    opacity: 0.6;
+    transform: rotate(-12deg) scale(0.92);
+  }
+  60% {
+    opacity: 1;
+    transform: rotate(4deg) scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+.status-badge-swap {
+  animation: status-badge-swap 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.status-badge-icon-swap {
+  display: inline-flex;
+  animation: status-badge-icon-swap 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes motion-enter-lift {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes motion-enter-right {
+  0% {
+    opacity: 0;
+    transform: translateX(12px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes motion-attention-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(127, 86, 217, 0.2);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(127, 86, 217, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(127, 86, 217, 0);
+  }
+}
+
+@keyframes motion-tab-pop {
+  0% {
+    transform: translateY(2px) scale(0.98);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.motion-enter-lift {
+  animation: motion-enter-lift 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.motion-enter-right {
+  animation: motion-enter-right 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.motion-attention-pulse {
+  animation: motion-attention-pulse 1200ms ease-out 1;
+}
+
+.motion-tab-pop {
+  animation: motion-tab-pop 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-badge-swap,
+  .status-badge-icon-swap,
+  .motion-enter-lift,
+  .motion-enter-right,
+  .motion-attention-pulse,
+  .motion-tab-pop {
+    animation: none !important;
+  }
+}
