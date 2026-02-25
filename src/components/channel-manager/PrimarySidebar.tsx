@@ -30,7 +30,7 @@ export interface PrimarySidebarProps {
 export function PrimarySidebar({ activeIndex = 4 }: PrimarySidebarProps) {
   return (
     <aside className="w-[68px] shrink-0 p-1 h-[calc(100vh-16px)] sticky top-2 self-start bg-transparent">
-      <div className="h-full rounded-xl bg-transparent flex flex-col items-center justify-between shadow-[0px_1px_2px_rgba(10,13,18,0.05)]">
+      <div className="h-full rounded-xl bg-transparent flex flex-col items-center justify-between">
         <div className="w-full pt-5">
           <div className="px-3">
             <div
@@ -44,14 +44,12 @@ export function PrimarySidebar({ activeIndex = 4 }: PrimarySidebarProps) {
               <div className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0px_-0.5px_0.5px_0px_rgba(10,13,18,0.1)]" />
             </div>
           </div>
-          <div className="mt-4 px-3 flex flex-col items-center gap-[2px]">
+          <div className="mt-4 px-3 flex flex-col items-center gap-[2px] pointer-events-none select-none">
             {sidebarIcons.map((icon, index) => (
-              <button
+              <div
                 key={`${icon.src}-${index}`}
                 className="w-10 h-10 rounded-md flex items-center justify-center"
                 style={{ background: index === activeIndex ? '#fafafa' : 'transparent' }}
-                aria-label="Primary navigation item"
-                type="button"
               >
                 <span
                   className="flex items-center justify-center shrink-0 pointer-events-none"
@@ -64,9 +62,10 @@ export function PrimarySidebar({ activeIndex = 4 }: PrimarySidebarProps) {
                     src={icon.src}
                     alt=""
                     className="w-auto h-auto max-w-full max-h-full object-contain block"
+                    style={{ maxWidth: 18, maxHeight: 18 }}
                   />
                 </span>
-              </button>
+              </div>
             ))}
           </div>
         </div>

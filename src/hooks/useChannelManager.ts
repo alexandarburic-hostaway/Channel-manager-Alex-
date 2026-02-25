@@ -277,6 +277,7 @@ export function useChannelManager() {
                   l.integrationStatus === 'missing_requirements'
                     ? ('missing_requirements' as IntegrationStatus)
                     : ('pending_export' as IntegrationStatus),
+                channelStatus: visibilityById[l.id] ?? l.channelStatus ?? 'hidden_from_guests',
               }
             : l
         ),

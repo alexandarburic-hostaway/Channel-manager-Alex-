@@ -97,10 +97,10 @@ export function ExportModal({ open, onClose, channel, listings, onExport }: Expo
           <table className="w-full min-w-[980px] table-fixed border-collapse">
             <thead>
               <tr className="border-b border-[#e9eaeb] bg-[#fafafa]">
-                <th className="w-12 px-4 py-3 text-left">
+                <th className="sticky left-0 z-30 w-12 px-4 py-3 text-left bg-[#fafafa]">
                   <Checkbox checked={allSelected} onChange={toggleAll} />
                 </th>
-                <th className="px-6 py-3 text-left text-[12px] leading-[18px] font-semibold text-[#414651]">
+                <th className="sticky left-12 z-30 px-6 py-3 text-left text-[12px] leading-[18px] font-semibold text-[#414651] bg-[#fafafa]">
                   Hostaway listing
                 </th>
                 <th className="px-6 py-3 text-left text-[12px] leading-[18px] font-semibold text-[#414651]">
@@ -120,17 +120,20 @@ export function ExportModal({ open, onClose, channel, listings, onExport }: Expo
             <tbody>
               {filteredListings.map((listing) => {
                 const isMissing = listing.integrationStatus === 'missing_requirements'
+                const isSelected = selectedIds.has(listing.id)
                 const hostawayId = listing.hostawayId ?? listing.channelListingId ?? '123456111'
                 return (
                 <tr key={listing.id} className="border-b border-[#e9eaeb]">
-                  <td className="w-12 px-4 py-3">
+                  <td className="sticky left-0 z-20 w-12 px-4 py-3 bg-white">
                     <Checkbox
                       checked={selectedIds.has(listing.id)}
                       onChange={() => toggleRow(listing.id)}
                       disabled={isMissing}
                     />
                   </td>
-                  <td className="px-6 py-3 text-[14px] leading-5 text-[#181d27]">{listing.name}</td>
+                  <td className="sticky left-12 z-20 px-6 py-3 text-[14px] leading-5 text-[#181d27] bg-white">
+                    {listing.name}
+                  </td>
                   <td className="px-6 py-3 text-[14px] leading-5 text-[#535862]">{hostawayId}</td>
                   <td className="px-6 py-3">
                     {isMissing ? (
@@ -160,19 +163,21 @@ export function ExportModal({ open, onClose, channel, listings, onExport }: Expo
                     )}
                   </td>
                   <td className="px-6 py-3">
-                    <select
-                      value={visibilityById[listing.id] ?? 'hidden_from_guests'}
-                      onChange={(event) =>
-                        setVisibilityById((prev) => ({
-                          ...prev,
-                          [listing.id]: event.target.value as ChannelListingStatus,
-                        }))
-                      }
-                      className="inline-flex h-9 items-center gap-1 rounded-lg border border-[#d5d7da] bg-white px-3 text-[14px] leading-5 text-[#535862] outline-none"
-                    >
-                      <option value="hidden_from_guests">Hidden from guests</option>
-                      <option value="live">Live</option>
-                    </select>
+                    {isSelected ? (
+                      <select
+                        value={visibilityById[listing.id] ?? 'hidden_from_guests'}
+                        onChange={(event) =>
+                          setVisibilityById((prev) => ({
+                            ...prev,
+                            [listing.id]: event.target.value as ChannelListingStatus,
+                          }))
+                        }
+                        className="inline-flex h-9 items-center gap-1 rounded-lg border border-[#d5d7da] bg-white px-3 text-[14px] leading-5 text-[#535862] outline-none"
+                      >
+                        <option value="hidden_from_guests">Hidden from guests</option>
+                        <option value="live">Live</option>
+                      </select>
+                    ) : null}
                   </td>
                 </tr>
               )})}

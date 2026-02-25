@@ -25,7 +25,7 @@ export function ConnectionIntermediatePanel({
       <p className="mt-1 text-[14px] leading-5 text-[#667085]">
         Complete these details and connect the account. Listings will be loaded after successful connection.
       </p>
-      <div className="mt-6 grid grid-cols-1 gap-4">
+      <div className="mt-6 grid grid-cols-1 gap-4 max-w-[480px]">
         <div>
           <label className="text-[14px] leading-5 font-medium text-[#344054]">Account name</label>
           <Input value={accountName} onChange={(event) => onAccountNameChange(event.target.value)} className="mt-1" />

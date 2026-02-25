@@ -4,7 +4,7 @@ interface ConnectionHelpSidebarProps {
 
 export function ConnectionHelpSidebar({ channelName }: ConnectionHelpSidebarProps) {
   return (
-    <aside className="rounded-xl border border-[rgba(0,0,0,0.08)] bg-[#fafafa] p-6 shadow-[0px_1px_2px_rgba(10,13,18,0.05)]">
+    <aside className="w-full rounded-xl border border-[rgba(0,0,0,0.08)] bg-[#fafafa] p-6 shadow-[0px_1px_2px_rgba(10,13,18,0.05)]">
       <div className="w-10 h-10 rounded-full bg-[#f5f5f5] flex items-center justify-center">
         <svg className="w-6 h-6 text-[#717680]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
           <circle cx="12" cy="12" r="9" />

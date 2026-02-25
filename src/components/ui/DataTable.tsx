@@ -83,7 +83,7 @@ export function DataTable<T extends { id: string }>({
         <table className="w-full">
           <thead>
             <tr className="border-b border-border bg-muted/50">
-              <th className="w-12 px-6 py-3 text-left">
+              <th className="sticky left-0 z-30 w-12 px-6 py-3 text-left bg-muted/50">
                 <Checkbox
                   checked={allSelected}
                   ref={(el) => {
@@ -95,7 +95,9 @@ export function DataTable<T extends { id: string }>({
               {columns.map((col) => (
                 <th
                   key={col.id}
-                  className="px-6 py-3 text-left text-sm font-medium text-muted-foreground"
+                  className={`px-6 py-3 text-left text-sm font-medium text-muted-foreground ${
+                    columns[0]?.id === col.id ? 'sticky left-12 z-30 bg-muted/50' : ''
+                  }`}
                 >
                   {col.sortable && onSort ? (
                     <button
@@ -127,14 +129,19 @@ export function DataTable<T extends { id: string }>({
                   key={row.id}
                   className="border-b border-border hover:bg-muted/30 transition-colors"
                 >
-                  <td className="w-12 px-6 py-3">
+                  <td className="sticky left-0 z-20 w-12 px-6 py-3 bg-background">
                     <Checkbox
                       checked={selectedIds.has(row.id)}
                       onChange={() => toggleRow(row.id)}
                     />
                   </td>
                   {columns.map((col) => (
-                    <td key={col.id} className="px-6 py-3 text-sm">
+                    <td
+                      key={col.id}
+                      className={`px-6 py-3 text-sm ${
+                        columns[0]?.id === col.id ? 'sticky left-12 z-20 bg-background' : ''
+                      }`}
+                    >
                       {statusColumn?.id === col.id ? (
                         <Badge variant={statusColumn.getStatus(row) as never}>
                           {formatStatus(statusColumn.getStatus(row))}

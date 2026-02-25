@@ -335,7 +335,7 @@ export function AccountDetailsPage() {
                 </button>
               </div>
             )}
-            <Button onClick={openExportModalForAccount} variant="outline" className="h-9">
+            <Button onClick={openExportModalForAccount} variant="outline" className="h-9" disabled={!isConnectedState}>
               <ExportIcon className="w-5 h-5 mr-1.5" />
               {`Export to ${channel.name}`}
             </Button>
@@ -344,7 +344,7 @@ export function AccountDetailsPage() {
       </section>
 
       {!isConnectedState ? (
-        <div className="grid grid-cols-1 gap-2 lg:grid-cols-[1fr_320px]">
+        <div className="grid grid-cols-1 gap-2 xl:grid-cols-[minmax(0,1fr)_520px]">
           <ConnectionIntermediatePanel
             channel={channel}
             accountName={account.accountName}
