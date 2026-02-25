@@ -77,7 +77,7 @@ export function AccountTable({
             const channel = getChannelById(row.account.channelId)
             return (
               <tr key={row.account.id} className="group h-[72px] border-b border-[#e9eaeb]">
-                <td className="sticky left-0 z-20 px-3 text-center bg-white group-hover:bg-[#fcfcfd]">
+                <td className="sticky left-0 z-20 px-3 text-center bg-white group-hover:bg-[#fcfcfd] transition-[background-color] duration-[120ms] ease-[var(--motion-ease-default)]">
                   <span className="flex h-5 w-5 items-center justify-center mx-auto">
                     <UiCheckbox
                       checked={selectedAccountIds.has(row.account.id)}
@@ -86,7 +86,7 @@ export function AccountTable({
                     />
                   </span>
                 </td>
-                <td className="sticky left-[52px] z-20 px-6 bg-white group-hover:bg-[#fcfcfd]">
+                <td className="sticky left-[52px] z-20 px-6 bg-white group-hover:bg-[#fcfcfd] transition-[background-color] duration-[120ms] ease-[var(--motion-ease-default)]">
                   <Link to={`/accounts/${row.account.id}`} className="block min-w-0">
                     <p className="text-[14px] leading-5 font-semibold text-[#0086a8] truncate">{row.account.accountName}</p>
                     <p className="text-[14px] leading-5 font-normal text-[#535862] truncate">{row.account.email}</p>
@@ -114,7 +114,7 @@ export function AccountTable({
                 <td className="px-6 text-[14px] leading-5 text-[#535862]">{row.totalListings}</td>
                 <td className="px-6 text-[14px] leading-5 text-[#535862]">{row.listingsInHostaway}</td>
                 <td className="px-6 text-[14px] leading-5 text-[#535862]">{row.listingsNotInHostaway}</td>
-                <td className="sticky right-0 z-20 px-6 relative bg-white group-hover:bg-[#fcfcfd]">
+                <td className="sticky right-0 z-20 px-6 relative bg-white group-hover:bg-[#fcfcfd] transition-[background-color] duration-[120ms] ease-[var(--motion-ease-default)]">
                   <div className="absolute inset-y-0 -left-6 w-6 bg-gradient-to-l from-white to-transparent group-hover:from-[#fcfcfd]" />
                   <TableRowActions
                     actions={[
@@ -127,7 +127,7 @@ export function AccountTable({
                         label: `Remove ${row.account.accountName}`,
                         onClick: () => onRemoveAccount(row.account.id),
                         icon: (
-                          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <svg className="block w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <path d="M3 6h18M8 6V4h8v2m-9 0l1 14h8l1-14" />
                           </svg>
                         ),

@@ -15,7 +15,7 @@ export function TableRowActions({ actions }: TableRowActionsProps) {
   if (actions.length === 0) return null
 
   return (
-    <div className="absolute right-6 top-1/2 -translate-y-1/2 translate-x-2 inline-flex items-center gap-0.5 opacity-0 pointer-events-none group-hover:translate-x-0 group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:translate-x-0 group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition-all duration-250 ease-out">
+    <div className="absolute inset-y-0 right-6 inline-flex items-center gap-0.5 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto transition-opacity duration-[120ms] ease-[var(--motion-ease-default)] motion-reduce:transition-none">
       {actions.map((action) => (
         <Button
           key={action.label}

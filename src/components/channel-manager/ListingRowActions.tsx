@@ -29,7 +29,7 @@ export function ListingRowActions({
           : { onClick: onImport, ariaLabel: 'Import in progress', Icon: ImportIcon, disabled: true }
 
   return (
-    <div className="inline-flex items-center gap-0.5">
+    <div className="inline-flex h-9 items-center gap-0.5">
       <Button
         type="button"
         variant="ghost"
@@ -39,7 +39,9 @@ export function ListingRowActions({
         aria-label={primaryAction.ariaLabel}
         disabled={primaryAction.disabled}
       >
-        <primaryAction.Icon className={`w-6 h-6 ${integrationStatus === 'importing' ? 'animate-spin' : ''}`} />
+        <span className="w-6 h-6 inline-flex items-center justify-center">
+          <primaryAction.Icon className={`w-5 h-5 ${integrationStatus === 'importing' ? 'animate-spin' : ''}`} />
+        </span>
       </Button>
       <Button
         type="button"
@@ -49,19 +51,21 @@ export function ListingRowActions({
         onClick={onToggleVisibility}
         aria-label={channelStatus === 'hidden_from_guests' ? 'Make listing live' : 'Hide listing'}
       >
-        {channelStatus === 'hidden_from_guests' ? (
-          <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
-        ) : (
-          <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-            <path d="M3 3l18 18" />
-            <path d="M10.58 10.58A2 2 0 0 0 13.42 13.42" />
-            <path d="M9.88 5.09A10.94 10.94 0 0 1 12 4.9c5.52 0 9.4 5.1 10.2 6.3a1.3 1.3 0 0 1 0 1.4 17.23 17.23 0 0 1-3.3 3.7" />
-            <path d="M6.61 6.61A17.77 17.77 0 0 0 1.8 11.2a1.3 1.3 0 0 0 0 1.4C2.6 13.8 6.48 18.9 12 18.9c1.86 0 3.49-.57 4.89-1.4" />
-          </svg>
-        )}
+        <span className="w-6 h-6 inline-flex items-center justify-center">
+          {channelStatus === 'hidden_from_guests' ? (
+            <svg className="block w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          ) : (
+            <svg className="block w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <path d="M3 3l18 18" />
+              <path d="M10.58 10.58A2 2 0 0 0 13.42 13.42" />
+              <path d="M9.88 5.09A10.94 10.94 0 0 1 12 4.9c5.52 0 9.4 5.1 10.2 6.3a1.3 1.3 0 0 1 0 1.4 17.23 17.23 0 0 1-3.3 3.7" />
+              <path d="M6.61 6.61A17.77 17.77 0 0 0 1.8 11.2a1.3 1.3 0 0 0 0 1.4C2.6 13.8 6.48 18.9 12 18.9c1.86 0 3.49-.57 4.89-1.4" />
+            </svg>
+          )}
+        </span>
       </Button>
     </div>
   )

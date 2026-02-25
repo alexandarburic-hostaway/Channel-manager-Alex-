@@ -54,10 +54,25 @@ export function ExportModal({ open, onClose, channel, listings, onExport }: Expo
     return listings.filter((listing) => listing.name.toLowerCase().includes(q))
   }, [listings, search])
 
-  const allSelected = filteredListings.length > 0 && selectedIds.size === filteredListings.length
+  const selectableFilteredListings = useMemo(
+    () => filteredListings.filter((listing) => listing.integrationStatus !== 'missing_requirements'),
+    [filteredListings]
+  )
+
+  const allSelected =
+    selectableFilteredListings.length > 0 &&
+    selectableFilteredListings.every((listing) => selectedIds.has(listing.id))
+
   const toggleAll = () => {
-    if (allSelected) setSelectedIds(new Set())
-    else setSelectedIds(new Set(filteredListings.map((l) => l.id)))
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (allSelected) {
+        selectableFilteredListings.forEach((listing) => next.delete(listing.id))
+      } else {
+        selectableFilteredListings.forEach((listing) => next.add(listing.id))
+      }
+      return next
+    })
   }
 
   return (

@@ -113,7 +113,7 @@ export function TableFilter({ types, value, onChange }: TableFilterProps) {
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className={`h-9 inline-flex items-center gap-2 rounded-lg border border-[#d5d7da] bg-white px-3 text-[14px] font-semibold leading-5 text-[#414651] shadow-[0px_1px_2px_rgba(10,13,18,0.05)] transition-all duration-300 ease-out hover:bg-[#f9fafb] hover:-translate-y-[1px] ${activeCount > 0 ? 'motion-attention-pulse border-[#b2ddff] bg-[#f5faff]' : ''}`}
+        className={`h-9 inline-flex items-center gap-2 rounded-lg border border-[#d5d7da] bg-white px-3 text-[14px] font-semibold leading-5 text-[#414651] shadow-[0px_1px_2px_rgba(10,13,18,0.05)] transition-[background-color,border-color,color] duration-[120ms] ease-[var(--motion-ease-default)] hover:bg-[#f9fafb] ${activeCount > 0 ? 'border-[#b2ddff] bg-[#f5faff]' : ''}`}
       >
         <svg className="w-5 h-5 text-[#717680]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
           <path d="M4 6h16M7 12h10M10 18h4" />
@@ -124,7 +124,7 @@ export function TableFilter({ types, value, onChange }: TableFilterProps) {
       {chips.map((chip) => (
         <span
           key={chip.typeId}
-          className="inline-flex h-9 items-center gap-1 rounded-lg border border-[#d5d7da] bg-[#fafafa] px-3 text-[14px] font-semibold leading-5 text-[#414651] motion-enter-lift"
+          className="inline-flex h-9 items-center gap-1 rounded-lg border border-[#d5d7da] bg-[#fafafa] px-3 text-[14px] font-semibold leading-5 text-[#414651]"
         >
           {chip.label}
           <button type="button" className="text-[#717680] hover:text-[#414651]" onClick={() => removeChip(chip.typeId)} aria-label={`Remove ${chip.label}`}>
@@ -142,7 +142,7 @@ export function TableFilter({ types, value, onChange }: TableFilterProps) {
       )}
 
       {open && (
-        <div className="absolute left-0 top-full z-50 mt-2 w-[500px] overflow-hidden rounded-lg border border-[rgba(0,0,0,0.08)] bg-white shadow-[0px_12px_16px_-4px_rgba(10,13,18,0.08),0px_4px_6px_-2px_rgba(10,13,18,0.03),0px_2px_2px_-1px_rgba(10,13,18,0.04)] motion-enter-lift">
+        <div className="absolute left-0 top-full z-50 mt-2 w-[500px] overflow-hidden rounded-lg border border-[rgba(0,0,0,0.08)] bg-white shadow-[0px_12px_16px_-4px_rgba(10,13,18,0.08),0px_4px_6px_-2px_rgba(10,13,18,0.03),0px_2px_2px_-1px_rgba(10,13,18,0.04)]">
           <div className="flex">
             <div className="w-[250px] border-r border-[#e9eaeb] py-1">
               {types.map((type) => (

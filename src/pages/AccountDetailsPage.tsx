@@ -8,6 +8,7 @@ import {
   LinkRegularIcon,
   BulkActionBar,
   ChannelIcon,
+  ConnectImportModal,
   ConnectionHelpSidebar,
   ConnectionIntermediatePanel,
   ListingsTable,
@@ -19,6 +20,8 @@ import {
 import { Button, Modal, Toast } from '@/components/ui'
 import { getChannelById } from '@/config/channels'
 import { useChannelManagerContext } from '@/context/ChannelManagerContext'
+import { createConnectionCandidates, createHostawayMapOptions, type ConnectionCandidateRow } from '@/lib/connectionCandidates'
+import { createBarcelonaExportCandidates } from '@/lib/exportCandidates'
 
 export function AccountDetailsPage() {
   const { accountId } = useParams<{ accountId: string }>()
@@ -28,6 +31,7 @@ export function AccountDetailsPage() {
     listings,
     successToast,
     simulateConnection,
+    finalizeConnectionWithPlans,
     startImport,
     startExport,
     removeAccount,
@@ -47,8 +51,13 @@ export function AccountDetailsPage() {
   const [headerMenuOpen, setHeaderMenuOpen] = useState(false)
   const [exportModalOpen, setExportModalOpen] = useState(false)
   const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false)
+  const [connectImportOpen, setConnectImportOpen] = useState(false)
+  const [connectionCandidates, setConnectionCandidates] = useState<ConnectionCandidateRow[]>([])
   const headerMenuRef = useRef<HTMLDivElement>(null)
   const selectAllRef = useRef<HTMLInputElement>(null)
+  const [exportCandidates, setExportCandidates] = useState(() =>
+    accountId && channel ? createBarcelonaExportCandidates(accountId, channel.id) : []
+  )
 
   useEffect(() => {
     if (!headerMenuOpen) return
@@ -90,6 +99,11 @@ export function AccountDetailsPage() {
       </div>
     )
   }
+
+  useEffect(() => {
+    if (!accountId || !channel || !exportModalOpen) return
+    setExportCandidates(createBarcelonaExportCandidates(accountId, channel.id))
+  }, [accountId, channel, exportModalOpen])
 
   const listingsInHostaway = accountListings.filter((listing) => listing.integrationStatus === 'connected').length
   const listingsNotInHostaway = Math.max(0, accountListings.length - listingsInHostaway)
@@ -154,6 +168,11 @@ export function AccountDetailsPage() {
 
   const connectAccount = () => {
     if (!accountId) return
+    if (channel.id === 'booking' || channel.id === 'vrbo') {
+      setConnectionCandidates(createConnectionCandidates(accountId))
+      setConnectImportOpen(true)
+      return
+    }
     simulateConnection(accountId, channel.id)
   }
 
@@ -419,12 +438,7 @@ export function AccountDetailsPage() {
         open={exportModalOpen}
         onClose={() => setExportModalOpen(false)}
         channel={channel}
-        listings={accountListings
-          .filter((listing) => listing.integrationStatus !== 'connected')
-          .map((listing) => ({
-          ...listing,
-          publishStatus: listing.publishStatus ?? 'draft',
-        }))}
+        listings={exportCandidates}
         onExport={(listingIds, visibilityById) => {
           if (!accountId) return
           setExportModalOpen(false)
@@ -451,6 +465,23 @@ export function AccountDetailsPage() {
           This will remove the account and all associated listings data from Channel Manager.
         </p>
       </Modal>
+
+      {(channel.id === 'booking' || channel.id === 'vrbo') && (
+        <ConnectImportModal
+          open={connectImportOpen}
+          onClose={() => setConnectImportOpen(false)}
+          channel={channel}
+          rows={connectionCandidates}
+          hostawayOptions={createHostawayMapOptions(connectionCandidates)}
+          onFinalize={(plans) => {
+            if (!accountId) return
+            const importIds = finalizeConnectionWithPlans(accountId, channel.id, connectionCandidates, plans)
+            if (importIds.length > 0) {
+              setTimeout(() => startImport(accountId, importIds), 0)
+            }
+          }}
+        />
+      )}
     </PageShell>
   )
 }

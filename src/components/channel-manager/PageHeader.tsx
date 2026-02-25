@@ -81,7 +81,7 @@ export function PageHeader({
                     }}
                     type="button"
                     onClick={() => onTabChange?.(tab.key)}
-                    className="relative z-10 flex items-center gap-2 h-full shrink-0 transition-colors duration-300 ease-out"
+                    className="relative z-10 flex items-center gap-2 h-full shrink-0 transition-colors duration-[120ms] ease-[var(--motion-ease-default)]"
                     style={{
                       fontSize: 14,
                       lineHeight: '20px',
@@ -92,7 +92,7 @@ export function PageHeader({
                     {tab.label}
                     {typeof tab.count === 'number' && (
                       <span
-                        className="inline-flex items-center justify-center rounded-md shrink-0 min-w-6 h-6 px-2 text-[14px] leading-5 font-medium transition-colors duration-300"
+                        className="inline-flex items-center justify-center rounded-md shrink-0 min-w-6 h-6 px-2 text-[14px] leading-5 font-medium transition-colors duration-[120ms] ease-[var(--motion-ease-default)]"
                         style={{
                           background: active ? '#e6f7f7' : '#f5f5f6',
                           color: active ? '#008380' : '#535862',
@@ -107,7 +107,7 @@ export function PageHeader({
               {!!tabs?.length && (
                 <div
                   aria-hidden="true"
-                  className="pointer-events-none absolute bottom-0 h-[2px] transition-[left,width,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                  className="pointer-events-none absolute bottom-0 h-[2px] transition-[left,width,opacity] duration-[180ms] ease-[var(--motion-ease-default)]"
                   style={{
                     left: indicator.left,
                     width: indicator.width,

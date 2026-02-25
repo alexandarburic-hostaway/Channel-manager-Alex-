@@ -1,3 +1,5 @@
+import { FadeIn } from '@/lib/motion'
+
 export interface EmptyStateProps {
   onConnectAccount: () => void
 }
@@ -5,6 +7,7 @@ export interface EmptyStateProps {
 export function EmptyState({ onConnectAccount }: EmptyStateProps) {
   return (
     <div className="flex w-full flex-1 min-h-0 items-center justify-center px-6 py-8">
+      <FadeIn scaleFrom={0.98} duration="normal">
       <div className="flex max-w-[360px] flex-col items-center text-center">
         <div className="relative w-[292px] h-[292px] flex items-center justify-center">
           <div className="absolute inset-0 rounded-full border border-[#f2f4f7]" />
@@ -26,7 +29,7 @@ export function EmptyState({ onConnectAccount }: EmptyStateProps) {
         </p>
         <button
           onClick={onConnectAccount}
-          className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-sm bg-[#181d27] text-white h-9 px-3 text-sm leading-5"
+          className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-lg font-semibold shadow-sm bg-[#181d27] text-white h-9 px-3 text-sm leading-5 transition-[background-color] duration-[120ms] ease-[var(--motion-ease-default)] hover:bg-[#0f1320] active:scale-[0.98]"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11 4.93" />
@@ -35,6 +38,7 @@ export function EmptyState({ onConnectAccount }: EmptyStateProps) {
           Connect account
         </button>
       </div>
+      </FadeIn>
     </div>
   )
 }

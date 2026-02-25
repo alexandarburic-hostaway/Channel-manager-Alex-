@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from 'react'
 import type { ChannelListingStatus, IntegrationStatus } from '@/types/channel'
 import { LinkBrokenIcon, LinkRegularIcon } from './ActionIcons'
 
@@ -93,25 +92,6 @@ export function AirbnbStatusBadge({ status, muted = false }: AirbnbStatusBadgePr
 }
 
 export function StatusBadge({ status }: StatusBadgeProps) {
-  const prevStatusRef = useRef<IntegrationStatus>(status)
-  const [animateSwap, setAnimateSwap] = useState(false)
-
-  useEffect(() => {
-    const previous = prevStatusRef.current
-    const isConnectedSwap =
-      (previous === 'connected' && status === 'disconnected') ||
-      (previous === 'disconnected' && status === 'connected')
-
-    if (isConnectedSwap) {
-      setAnimateSwap(true)
-      const timeoutId = setTimeout(() => setAnimateSwap(false), 280)
-      prevStatusRef.current = status
-      return () => clearTimeout(timeoutId)
-    }
-
-    prevStatusRef.current = status
-  }, [status])
-
   const config =
     status === 'connected'
       ? { className: 'border-[#abefc6] bg-[#ecfdf3] text-[#067647]', icon: <LinkRegularIcon className="h-3 w-3" /> }
@@ -124,8 +104,8 @@ export function StatusBadge({ status }: StatusBadgeProps) {
             : { className: 'border-[#d5d7da] bg-white text-[#535862]', icon: <DotIcon className="h-2 w-2 text-[#98a2b3]" /> }
 
   return (
-    <span className={`${chipBase} ${config.className} transition-colors duration-300 ease-out ${animateSwap ? 'status-badge-swap' : ''}`}>
-      <span className={animateSwap ? 'status-badge-icon-swap' : ''}>{config.icon}</span>
+    <span className={`${chipBase} ${config.className}`}>
+      <span>{config.icon}</span>
       {labelMap[status]}
     </span>
   )

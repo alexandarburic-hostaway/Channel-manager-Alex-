@@ -127,7 +127,7 @@ export function DataTable<T extends { id: string }>({
               data.map((row) => (
                 <tr
                   key={row.id}
-                  className="border-b border-border hover:bg-muted/30 transition-colors"
+                  className="border-b border-border hover:bg-muted/30 transition-colors duration-[120ms] ease-[var(--motion-ease-default)]"
                 >
                   <td className="sticky left-0 z-20 w-12 px-6 py-3 bg-background">
                     <Checkbox

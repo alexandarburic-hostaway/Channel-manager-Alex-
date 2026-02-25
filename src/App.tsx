@@ -1,13 +1,15 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import { ImportProgressToast } from '@/components/channel-manager'
 import { Toast } from '@/components/ui'
 import { ChannelManagerProvider } from '@/context/ChannelManagerContext'
 import { useChannelManagerContext } from '@/context/ChannelManagerContext'
 import { ChannelManagerPage } from '@/pages/ChannelManagerPage'
 import { AccountDetailsPage } from '@/pages/AccountDetailsPage'
+import { MotionPresence, PageTransition } from '@/lib/motion'
 
 function AppContent() {
   const { importToast, exportToast, setImportToast, setExportToast, setAccounts } = useChannelManagerContext()
+  const location = useLocation()
 
   const handleCancelImport = () => {
     setImportToast((prev) => ({ ...prev, show: false }))
@@ -26,10 +28,14 @@ function AppContent() {
 
   return (
     <div className="h-full min-h-screen bg-background">
-      <Routes>
-        <Route path="/" element={<ChannelManagerPage />} />
-        <Route path="/accounts/:accountId" element={<AccountDetailsPage />} />
-      </Routes>
+      <MotionPresence mode="wait">
+        <PageTransition routeKey={location.pathname}>
+          <Routes location={location}>
+            <Route path="/" element={<ChannelManagerPage />} />
+            <Route path="/accounts/:accountId" element={<AccountDetailsPage />} />
+          </Routes>
+        </PageTransition>
+      </MotionPresence>
       <ImportProgressToast
         open={importToast.show}
         current={importToast.current}

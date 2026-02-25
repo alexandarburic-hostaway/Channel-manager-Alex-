@@ -159,7 +159,57 @@ export function useChannelManager() {
         }
       })
     )
+    setSuccessToast({ show: true, message: 'Account connected successfully' })
   }, [])
+
+  const finalizeConnectionWithPlans = useCallback(
+    (
+      accountId: string,
+      channelId: string,
+      rows: Array<{ id: string; name: string; channelListingId: string; channelStatus: ChannelListingStatus }>,
+      plans: Array<{ rowId: string; action: 'import' | 'map' | 'do_nothing'; mappedHostawayName?: string }>
+    ) => {
+      const planById = new Map(plans.map((plan) => [plan.rowId, plan]))
+      const nextListings: Listing[] = rows.map((row, index) => {
+        const plan = planById.get(row.id) ?? { action: 'import' as const }
+        const isMapped = plan.action === 'map'
+        return {
+          id: row.id,
+          name: row.name,
+          channelId,
+          accountId,
+          integrationStatus: isMapped ? 'connected' : 'not_in_hostaway',
+          channelStatus: row.channelStatus,
+          channelListingId: row.channelListingId,
+          hostawayName: isMapped ? plan.mappedHostawayName ?? row.name : null,
+          hostawayId: isMapped ? `HA-MAP-${String(8800 + index)}` : null,
+        }
+      })
+
+      const importIds = plans.filter((plan) => plan.action === 'import').map((plan) => plan.rowId)
+      const mappedCount = plans.filter((plan) => plan.action === 'map').length
+      const notSynced = plans.filter((plan) => plan.action !== 'map').length
+
+      setListings((prev) => ({ ...prev, [accountId]: nextListings }))
+      setAccounts((prev) =>
+        prev.map((a) =>
+          a.id === accountId
+            ? {
+                ...a,
+                status: 'connected' as IntegrationStatus,
+                accountListings: nextListings.length,
+                synced: mappedCount,
+                notSynced,
+              }
+            : a
+        )
+      )
+      setSuccessToast({ show: true, message: 'Connection established successfully' })
+
+      return importIds
+    },
+    []
+  )
 
   const startImport = useCallback((accountId: string, listingIds: string[]) => {
     const total = listingIds.length
@@ -378,6 +428,7 @@ export function useChannelManager() {
     closeSelectChannel,
     handleSelectChannel,
     simulateConnection,
+    finalizeConnectionWithPlans,
     startImport,
     startExport,
     openExportModal,

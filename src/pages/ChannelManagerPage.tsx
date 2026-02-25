@@ -14,6 +14,7 @@ import {
 import { Button, Input, Modal } from '@/components/ui'
 import { useChannelManagerContext } from '@/context/ChannelManagerContext'
 import { getChannelById } from '@/config/channels'
+import { createBarcelonaExportCandidates } from '@/lib/exportCandidates'
 import type { Listing } from '@/types/channel'
 
 export function ChannelManagerPage() {
@@ -166,7 +167,10 @@ export function ChannelManagerPage() {
     ? accounts.find((account) => account.id === exportAccountId) ?? null
     : null
   const exportChannel = exportAccount ? getChannelById(exportAccount.channelId) ?? null : null
-  const exportListings = exportAccount ? listings[exportAccount.id] ?? [] : []
+  const exportListings =
+    exportAccount && exportChannel
+      ? createBarcelonaExportCandidates(exportAccount.id, exportChannel.id)
+      : []
 
   return (
     <PageShell>
@@ -270,10 +274,7 @@ export function ChannelManagerPage() {
             setExportAccountId(null)
           }}
           channel={exportChannel}
-          listings={exportListings.map((listing) => ({
-            ...listing,
-            publishStatus: listing.publishStatus ?? 'draft',
-          }))}
+          listings={exportListings}
           onExport={executeExport}
         />
       )}
