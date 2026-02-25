@@ -1,21 +1,37 @@
-import { useState } from 'react'
-import { Modal, Checkbox, Badge, Button } from '@/components/ui'
+import { useEffect, useMemo, useState } from 'react'
+import { Modal, Checkbox, Button } from '@/components/ui'
 import type { ChannelConfig } from '@/types/channel'
-import type { Listing, PublishStatus } from '@/types/channel'
+import type { ChannelListingStatus, Listing } from '@/types/channel'
 
 export interface ExportModalProps {
   open: boolean
   onClose: () => void
   channel: ChannelConfig
   listings: Listing[]
-  onExport: (listingIds: string[]) => void
+  onExport: (listingIds: string[], visibilityById: Record<string, ChannelListingStatus>) => void
 }
 
 export function ExportModal({ open, onClose, channel, listings, onExport }: ExportModalProps) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [search, setSearch] = useState('')
+  const [visibilityById, setVisibilityById] = useState<Record<string, ChannelListingStatus>>({})
+
+  useEffect(() => {
+    if (!open) return
+    setVisibilityById((prev) => {
+      const next = { ...prev }
+      listings.forEach((listing) => {
+        if (!next[listing.id]) next[listing.id] = 'hidden_from_guests'
+      })
+      return next
+    })
+  }, [open, listings])
 
   const handleExport = () => {
-    onExport(Array.from(selectedIds))
+    const selectedVisibility = Object.fromEntries(
+      Array.from(selectedIds).map((id) => [id, visibilityById[id] ?? 'hidden_from_guests'])
+    ) as Record<string, ChannelListingStatus>
+    onExport(Array.from(selectedIds), selectedVisibility)
     setSelectedIds(new Set())
     onClose()
   }
@@ -32,98 +48,151 @@ export function ExportModal({ open, onClose, channel, listings, onExport }: Expo
     setSelectedIds(next)
   }
 
-  const allSelected = listings.length > 0 && selectedIds.size === listings.length
+  const filteredListings = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    if (!q) return listings
+    return listings.filter((listing) => listing.name.toLowerCase().includes(q))
+  }, [listings, search])
+
+  const allSelected = filteredListings.length > 0 && selectedIds.size === filteredListings.length
   const toggleAll = () => {
     if (allSelected) setSelectedIds(new Set())
-    else setSelectedIds(new Set(listings.map((l) => l.id)))
+    else setSelectedIds(new Set(filteredListings.map((l) => l.id)))
   }
 
   return (
-    <Modal open={open} onClose={handleClose} title={`Export to ${channel.name}`} size="full">
+    <Modal open={open} onClose={handleClose} title={`Export listings to ${channel.name}`} size="full">
       <div className="flex flex-col h-full">
-        <p className="text-sm text-muted-foreground mb-4">
-          Select the listings you want to export to {channel.name}.
-        </p>
-        <div className="flex-1 overflow-auto border border-border rounded-lg">
-          <table className="w-full">
+        <div className="pb-4">
+          <h3 className="text-[18px] leading-7 font-semibold text-[#181d27]">Select listings to export</h3>
+          <p className="mt-1 text-[14px] leading-5 text-[#535862]">
+            These Hostaway listings aren&apos;t on this {channel.name} account yet. Select the ones you want to
+            publish. If a listing is missing required data, you&apos;ll need to add it before publishing.
+          </p>
+        </div>
+        <div className="mb-4 flex items-center justify-between gap-4">
+          <button
+            type="button"
+            className="inline-flex h-9 items-center gap-2 rounded-lg border border-[#d5d7da] bg-white px-3 text-[14px] font-semibold leading-5 text-[#414651] shadow-[0px_1px_2px_rgba(10,13,18,0.05)]"
+          >
+            <svg className="w-5 h-5 text-[#717680]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <path d="M4 6h16M7 12h10M10 18h4" />
+            </svg>
+            Filter
+          </button>
+          <div className="relative w-[280px] max-w-full">
+            <svg className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#717680]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <circle cx="11" cy="11" r="7" />
+              <path d="M20 20l-3.5-3.5" />
+            </svg>
+            <input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search by name"
+              className="h-9 w-full rounded-lg border border-[#d5d7da] bg-white pl-10 pr-3 text-[14px] leading-5 text-[#181d27] outline-none placeholder:text-[#717680]"
+            />
+          </div>
+        </div>
+        <div className="flex-1 overflow-auto border border-[#e9eaeb] rounded-lg">
+          <table className="w-full min-w-[980px] table-fixed border-collapse">
             <thead>
-              <tr className="border-b border-border bg-muted/50">
-                <th className="w-12 px-6 py-3 text-left">
+              <tr className="border-b border-[#e9eaeb] bg-[#fafafa]">
+                <th className="w-12 px-4 py-3 text-left">
                   <Checkbox checked={allSelected} onChange={toggleAll} />
                 </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-muted-foreground">
-                  Listing
+                <th className="px-6 py-3 text-left text-[12px] leading-[18px] font-semibold text-[#414651]">
+                  Hostaway listing
                 </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-muted-foreground">
+                <th className="px-6 py-3 text-left text-[12px] leading-[18px] font-semibold text-[#414651]">
+                  Hostaway ID
+                </th>
+                <th className="px-6 py-3 text-left text-[12px] leading-[18px] font-semibold text-[#414651]">
                   Publish status
                 </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-muted-foreground">
-                  Requirements
+                <th className="px-6 py-3 text-left text-[12px] leading-[18px] font-semibold text-[#414651]">
+                  Action
                 </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-muted-foreground">
+                <th className="px-6 py-3 text-left text-[12px] leading-[18px] font-semibold text-[#414651]">
                   Visibility
                 </th>
               </tr>
             </thead>
             <tbody>
-              {listings.map((listing) => (
-                <tr key={listing.id} className="border-b border-border hover:bg-muted/30">
-                  <td className="w-12 px-6 py-3">
+              {filteredListings.map((listing) => {
+                const isMissing = listing.integrationStatus === 'missing_requirements'
+                const hostawayId = listing.hostawayId ?? listing.channelListingId ?? '123456111'
+                return (
+                <tr key={listing.id} className="border-b border-[#e9eaeb]">
+                  <td className="w-12 px-4 py-3">
                     <Checkbox
                       checked={selectedIds.has(listing.id)}
                       onChange={() => toggleRow(listing.id)}
+                      disabled={isMissing}
                     />
                   </td>
-                  <td className="px-6 py-3 text-sm font-medium">{listing.name}</td>
+                  <td className="px-6 py-3 text-[14px] leading-5 text-[#181d27]">{listing.name}</td>
+                  <td className="px-6 py-3 text-[14px] leading-5 text-[#535862]">{hostawayId}</td>
                   <td className="px-6 py-3">
-                    <Badge variant={getPublishVariant(listing.publishStatus)}>
-                      {listing.publishStatus ?? 'Draft'}
-                    </Badge>
+                    {isMissing ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-[#fecdca] bg-[#fef3f2] px-2 py-0.5 text-[12px] font-medium leading-[18px] text-[#f04438]">
+                        <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                        Missing requirements
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-[#abefc6] bg-[#ecfdf3] px-2 py-0.5 text-[12px] font-medium leading-[18px] text-[#067647]">
+                        <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                        Ready to export
+                      </span>
+                    )}
                   </td>
                   <td className="px-6 py-3">
-                    {listing.missingRequirements && listing.missingRequirements.length > 0 ? (
+                    {isMissing ? (
                       <Button
-                        variant="ghost"
+                        variant="outline"
                         size="sm"
-                        className="text-destructive hover:text-destructive"
+                        className="h-9"
+                        disabled
                       >
                         See what&apos;s missing
                       </Button>
                     ) : (
-                      <span className="text-sm text-muted-foreground">—</span>
+                      <span className="text-[14px] leading-5 text-[#98a2b3]">—</span>
                     )}
                   </td>
                   <td className="px-6 py-3">
-                    <select className="text-sm border border-input rounded px-2 py-1 bg-background">
-                      <option>Visible</option>
-                      <option>Hidden</option>
+                    <select
+                      value={visibilityById[listing.id] ?? 'hidden_from_guests'}
+                      onChange={(event) =>
+                        setVisibilityById((prev) => ({
+                          ...prev,
+                          [listing.id]: event.target.value as ChannelListingStatus,
+                        }))
+                      }
+                      className="inline-flex h-9 items-center gap-1 rounded-lg border border-[#d5d7da] bg-white px-3 text-[14px] leading-5 text-[#535862] outline-none"
+                    >
+                      <option value="hidden_from_guests">Hidden from guests</option>
+                      <option value="live">Live</option>
                     </select>
                   </td>
                 </tr>
-              ))}
+              )})}
             </tbody>
           </table>
         </div>
-        <div className="flex items-center justify-between mt-6 pt-4 border-t border-border">
+        <div className="flex items-center justify-between mt-6 pt-4 border-t border-[#e9eaeb]">
           <span className="text-sm text-muted-foreground">
-            {selectedIds.size} of {listings.length} selected
+            {selectedIds.size} of {filteredListings.length} selected
           </span>
           <div className="flex gap-2">
             <Button variant="outline" onClick={handleClose}>
               Cancel
             </Button>
             <Button onClick={handleExport} disabled={selectedIds.size === 0}>
-              Export {selectedIds.size} listings
+              {`Export ${selectedIds.size} listings`}
             </Button>
           </div>
         </div>
       </div>
     </Modal>
   )
-}
-
-function getPublishVariant(s?: PublishStatus): 'default' | 'published' | 'missing_requirements' {
-  if (s === 'published') return 'published'
-  if (s === 'draft') return 'default'
-  return 'default'
 }

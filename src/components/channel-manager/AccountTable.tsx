@@ -101,9 +101,15 @@ export function AccountTable({
                   )}
                 </td>
                 <td className="px-6">
-                  <span className="inline-flex rounded-full border px-2 py-0.5 text-[12px] leading-[18px] font-medium bg-[#ecfdf3] border-[#abefc6] text-[#067647]">
-                    {row.account.status === 'connected' ? 'Connected' : 'Connecting'}
-                  </span>
+                  {row.account.status === 'connected' ? (
+                    <span className="inline-flex rounded-full border px-2 py-0.5 text-[12px] leading-[18px] font-medium bg-[#ecfdf3] border-[#abefc6] text-[#067647]">
+                      Connected
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center rounded-full border border-[#fedf89] bg-[#fffaeb] px-2 py-0.5 text-[12px] font-medium leading-[18px] text-[#b54708]">
+                      Not connected
+                    </span>
+                  )}
                 </td>
                 <td className="px-6 text-[14px] leading-5 text-[#535862]">{row.totalListings}</td>
                 <td className="px-6 text-[14px] leading-5 text-[#535862]">{row.listingsInHostaway}</td>

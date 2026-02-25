@@ -2,6 +2,7 @@ export type IntegrationStatus =
   | 'pending'
   | 'connecting'
   | 'pending_import'
+  | 'pending_export'
   | 'not_in_hostaway'
   | 'importing'
   | 'connected'

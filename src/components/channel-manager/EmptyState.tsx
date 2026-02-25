@@ -29,7 +29,8 @@ export function EmptyState({ onConnectAccount }: EmptyStateProps) {
           className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-sm bg-[#181d27] text-white h-9 px-3 text-sm leading-5"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11 4.93" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 1 0 7.07 7.07L13 19.07" />
           </svg>
           Connect account
         </button>

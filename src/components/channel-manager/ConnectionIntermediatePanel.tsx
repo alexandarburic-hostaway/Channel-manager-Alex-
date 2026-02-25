@@ -1,5 +1,6 @@
 import { Button, Input } from '@/components/ui'
 import type { ChannelConfig } from '@/types/channel'
+import { LinkRegularIcon } from './ActionIcons'
 
 interface ConnectionIntermediatePanelProps {
   channel: ChannelConfig
@@ -35,6 +36,7 @@ export function ConnectionIntermediatePanel({
         </div>
       </div>
       <Button className="mt-6" onClick={onConnect}>
+        <LinkRegularIcon className="w-5 h-5 mr-1.5" />
         Connect
       </Button>
     </section>

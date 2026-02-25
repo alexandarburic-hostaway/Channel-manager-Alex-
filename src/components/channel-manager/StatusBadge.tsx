@@ -8,12 +8,14 @@ interface StatusBadgeProps {
 
 interface AirbnbStatusBadgeProps {
   status: ChannelListingStatus
+  muted?: boolean
 }
 
 const labelMap: Record<IntegrationStatus, string> = {
   pending: 'Pending',
   connecting: 'Connecting...',
   pending_import: 'Pending import',
+  pending_export: 'Pending export',
   not_in_hostaway: 'Not in Hostaway',
   importing: 'Importing...',
   connected: 'Connected',
@@ -58,7 +60,16 @@ function ImportingIcon() {
 const chipBase =
   'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[12px] font-medium leading-[18px] whitespace-nowrap'
 
-export function AirbnbStatusBadge({ status }: AirbnbStatusBadgeProps) {
+export function AirbnbStatusBadge({ status, muted = false }: AirbnbStatusBadgeProps) {
+  if (muted) {
+    return (
+      <span className={`${chipBase} border-[#eaecf0] bg-[#f9fafb] text-[#98a2b3]`}>
+        <DotIcon className="h-2 w-2 text-[#98a2b3]" />
+        {airbnbLabelMap[status]}
+      </span>
+    )
+  }
+
   const colorClass =
     status === 'live'
       ? 'border-[#d5d7da] bg-white text-[#344054]'
@@ -104,9 +115,9 @@ export function StatusBadge({ status }: StatusBadgeProps) {
   const config =
     status === 'connected'
       ? { className: 'border-[#abefc6] bg-[#ecfdf3] text-[#067647]', icon: <LinkRegularIcon className="h-3 w-3" /> }
-      : status === 'importing'
+      : status === 'importing' || status === 'exporting'
         ? { className: 'border-[#d5d7da] bg-[#f5f5f5] text-[#535862]', icon: <ImportingIcon /> }
-        : status === 'pending_import'
+        : status === 'pending_import' || status === 'pending_export'
           ? { className: 'border-[#d5d7da] bg-[#f5f5f5] text-[#535862]', icon: <HourglassIcon /> }
           : status === 'not_in_hostaway' || status === 'disconnected'
             ? { className: 'border-[#d5d7da] bg-[#f5f5f5] text-[#535862]', icon: <LinkBrokenIcon className="h-3 w-3" /> }

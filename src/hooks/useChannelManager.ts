@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import type { ChannelConfig, ConnectedAccount, Listing, IntegrationStatus } from '@/types/channel'
+import type { ChannelConfig, ConnectedAccount, Listing, IntegrationStatus, ChannelListingStatus } from '@/types/channel'
 
 const MOCK_PROFILES = [
   { name: 'Olivia Rhye', email: 'olivia@untitledui.com', avatarUrl: 'https://i.pravatar.cc/96?img=32' },
@@ -31,6 +31,7 @@ export function useChannelManager() {
     show: boolean
     current: number
     total: number
+    accountId?: string
   }>({ show: false, current: 0, total: 0 })
   const [successToast, setSuccessToast] = useState<{ show: boolean; message: string }>({
     show: false,
@@ -238,7 +239,7 @@ export function useChannelManager() {
     setExportModalOpen(true)
   }, [])
 
-  const executeExport = useCallback((listingIds: string[]) => {
+  const executeExport = useCallback((listingIds: string[], _visibilityById?: Record<string, ChannelListingStatus>) => {
     const total = listingIds.length
     setExportModalOpen(false)
     setExportToast({ show: true, current: 0, total })
@@ -255,6 +256,104 @@ export function useChannelManager() {
       }
     }, 400)
   }, [])
+
+  const startExport = useCallback(
+    (accountId: string, listingIds: string[], visibilityById: Record<string, ChannelListingStatus>) => {
+    const total = listingIds.length
+    if (total === 0) return
+
+    const queue = [...listingIds]
+    const queuedIds = new Set(queue)
+
+    setListings((prev) => {
+      const existing = prev[accountId] ?? []
+      return {
+        ...prev,
+        [accountId]: existing.map((l) =>
+          queuedIds.has(l.id)
+            ? {
+                ...l,
+                integrationStatus:
+                  l.integrationStatus === 'missing_requirements'
+                    ? ('missing_requirements' as IntegrationStatus)
+                    : ('pending_export' as IntegrationStatus),
+              }
+            : l
+        ),
+      }
+    })
+
+    const eligibleQueue = queue.filter((listingId) => {
+      const listing = (listings[accountId] ?? []).find((l) => l.id === listingId)
+      return listing?.integrationStatus !== 'missing_requirements'
+    })
+    const eligibleTotal = eligibleQueue.length
+    if (eligibleTotal === 0) return
+
+    setExportToast({ show: true, current: 0, total: eligibleTotal, accountId })
+
+    const markExporting = (listingId: string) => {
+      setListings((prev) => {
+        const existing = prev[accountId] ?? []
+        return {
+          ...prev,
+          [accountId]: existing.map((l) =>
+            l.id === listingId ? { ...l, integrationStatus: 'exporting' as IntegrationStatus } : l
+          ),
+        }
+      })
+    }
+
+    const markConnected = (listingId: string) => {
+      setListings((prev) => {
+        const existing = prev[accountId] ?? []
+        return {
+          ...prev,
+          [accountId]: existing.map((l) =>
+            l.id === listingId
+              ? {
+                  ...l,
+                  integrationStatus: 'connected' as IntegrationStatus,
+                  channelStatus: visibilityById[listingId] ?? l.channelStatus ?? 'hidden_from_guests',
+                }
+              : l
+          ),
+        }
+      })
+    }
+
+    const processStep = (index: number) => {
+      const listingId = eligibleQueue[index]
+      if (!listingId) {
+        setAccounts((prev) =>
+          prev.map((a) => {
+            if (a.id !== accountId) return a
+            return {
+              ...a,
+              status: 'connected' as IntegrationStatus,
+              synced: a.synced + eligibleTotal,
+              notSynced: Math.max(0, (a.notSynced ?? 0) - eligibleTotal),
+            }
+          })
+        )
+        setExportToast((t) => ({ ...t, show: false }))
+        setSuccessToast({ show: true, message: 'Export completed successfully' })
+        return
+      }
+
+      markExporting(listingId)
+      setTimeout(() => {
+        markConnected(listingId)
+        const completed = index + 1
+        setExportToast((t) => ({ ...t, current: completed }))
+        processStep(completed)
+      }, IMPORT_STEP_MS)
+    }
+
+    processStep(0)
+  },
+  [listings]
+)
 
   const removeAccount = useCallback((accountId: string) => {
     setAccounts((prev) => prev.filter((a) => a.id !== accountId))
@@ -279,12 +378,14 @@ export function useChannelManager() {
     handleSelectChannel,
     simulateConnection,
     startImport,
+    startExport,
     openExportModal,
     executeExport,
     removeAccount,
     setExportModalOpen,
     setSuccessToast,
     setImportToast,
+    setExportToast,
     setListings,
     setAccounts,
   }

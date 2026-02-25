@@ -1,24 +1,26 @@
-const sidebarLogo = 'https://www.figma.com/api/mcp/asset/3997d600-f64e-4b1b-a822-82ef3fc051bc'
-const userAvatar = 'https://www.figma.com/api/mcp/asset/dfdea75e-29f6-4094-a98f-6448d3271185'
+const logoImage = 'https://www.figma.com/api/mcp/asset/d56c3ee8-b708-4345-9a05-29e5ff6b67d5'
+const userAvatar = 'https://www.figma.com/api/mcp/asset/784e9ba5-1254-47b9-adf2-78a62fb75747'
+
 const sidebarIcons = [
-  'https://www.figma.com/api/mcp/asset/954af460-cdb7-4c5e-a72e-3e325a730f9e',
-  'https://www.figma.com/api/mcp/asset/89eafbfb-6022-460b-8e25-4040f46c6685',
-  'https://www.figma.com/api/mcp/asset/8f96e007-d4c5-4184-aaa8-6faf2641133e',
-  'https://www.figma.com/api/mcp/asset/04463e30-835d-4e22-829e-b4db792c868f',
-  'https://www.figma.com/api/mcp/asset/e6104815-aff2-484e-a18b-dc8aa2444966',
-  'https://www.figma.com/api/mcp/asset/a31a5f58-243b-4a2d-bd11-4f77a8956e8c',
-  'https://www.figma.com/api/mcp/asset/e1110ff5-ea77-4207-9277-52761572ba4d',
-  'https://www.figma.com/api/mcp/asset/3fe8728c-5b93-4772-93e6-80bb5493a732',
-  'https://www.figma.com/api/mcp/asset/e06aad84-b688-41c3-9b5c-54237d42716b',
-  'https://www.figma.com/api/mcp/asset/67959b0c-19ea-4e0c-a354-4630b35bdd1b',
-  'https://www.figma.com/api/mcp/asset/6afeab96-11f9-49dc-8380-e081bbce6985',
-  'https://www.figma.com/api/mcp/asset/0f9e52bb-88cb-43e5-8281-bbe05d6d55a8',
-  'https://www.figma.com/api/mcp/asset/174e42ff-dee7-4685-b766-e310d08146a4',
-  'https://www.figma.com/api/mcp/asset/e58d0e5d-036c-464a-af33-73272153ed4d',
-  'https://www.figma.com/api/mcp/asset/df052066-3901-4bf1-8c67-7f488a5861c7',
-  'https://www.figma.com/api/mcp/asset/43d47661-2f39-410f-acc7-238d18e91bda',
-  'https://www.figma.com/api/mcp/asset/6672f152-6eff-4b21-830c-87de2a218458',
-  'https://www.figma.com/api/mcp/asset/a51c2679-3a8b-4cc2-a47f-251f6e84e4f9',
+  { src: 'https://www.figma.com/api/mcp/asset/5a2b2fc3-01b6-4ea0-bb9a-a90828a1c963' },
+  { src: 'https://www.figma.com/api/mcp/asset/f7f913a3-7d62-4b1a-bc8b-36264c52caba' },
+  { src: 'https://www.figma.com/api/mcp/asset/cd190197-4c6f-4a20-a547-9e600c20b40f' },
+  { src: 'https://www.figma.com/api/mcp/asset/fbe78eea-2759-4739-a50b-2c87a10ec800' },
+  { src: 'https://www.figma.com/api/mcp/asset/3f2624d0-00db-4411-99ac-bd55d30d20b3' },
+  { src: 'https://www.figma.com/api/mcp/asset/90c05595-6fa5-45b8-ba63-2482a1ec558c' },
+  { src: 'https://www.figma.com/api/mcp/asset/2f59b3d1-7854-4672-a5a3-d1b4555374c9' },
+  { src: 'https://www.figma.com/api/mcp/asset/a73dad53-41a1-442c-8403-653cce87396e' },
+  { src: 'https://www.figma.com/api/mcp/asset/41ad9386-f07e-440e-9ad0-81d9a59c737e' },
+  { src: 'https://www.figma.com/api/mcp/asset/889fafc6-209b-4643-849b-9c1c82b18d87' },
+  { src: 'https://www.figma.com/api/mcp/asset/8e49214f-5d00-40c4-b409-a282b47bf504' },
+  { src: 'https://www.figma.com/api/mcp/asset/dfce2361-d65d-46c9-a9c6-4010df273335' },
+  { src: 'https://www.figma.com/api/mcp/asset/f0189f49-9652-4c1f-9368-9af8d23235de' },
+  { src: 'https://www.figma.com/api/mcp/asset/d3baa076-771d-4a62-b9b4-d238f5df2ebd' },
+  { src: 'https://www.figma.com/api/mcp/asset/4972ed0f-ddb4-4761-a4a6-d5cb710dcb58' },
+  { src: 'https://www.figma.com/api/mcp/asset/f853cc1e-fd47-464a-b7a7-1cc7ed368f53' },
+  { src: 'https://www.figma.com/api/mcp/asset/4772be34-8b0a-4ac0-9518-5c65c60cf712' },
+  { src: 'https://www.figma.com/api/mcp/asset/a34cfea7-3747-4e8c-9e29-94e6f27bed36' },
+  { src: 'https://www.figma.com/api/mcp/asset/42a7a808-7cf8-4b6e-b1f9-f814aadcdeb2' },
 ]
 
 export interface PrimarySidebarProps {
@@ -27,33 +29,51 @@ export interface PrimarySidebarProps {
 
 export function PrimarySidebar({ activeIndex = 4 }: PrimarySidebarProps) {
   return (
-    <aside className="w-[68px] shrink-0 p-1 h-[calc(100vh-16px)] bg-transparent">
-      <div className="h-full rounded-xl bg-white border border-[#e9eaeb] shadow-[0px_1px_2px_rgba(10,13,18,0.05)] flex flex-col items-center justify-between">
+    <aside className="w-[68px] shrink-0 p-1 h-[calc(100vh-16px)] sticky top-2 self-start bg-transparent">
+      <div className="h-full rounded-xl bg-transparent flex flex-col items-center justify-between shadow-[0px_1px_2px_rgba(10,13,18,0.05)]">
         <div className="w-full pt-5">
           <div className="px-3">
-            <div className="w-8 h-8 overflow-hidden rounded-lg border border-[rgba(10,13,18,0.12)] shadow-[0px_1px_1px_-0.5px_rgba(10,13,18,0.13),0px_1px_3px_rgba(10,13,18,0.1),0px_1px_2px_rgba(10,13,18,0.06)]">
-              <img src={sidebarLogo} alt="" className="w-full h-full object-cover" />
+            <div
+              className="relative w-8 h-8 rounded-lg overflow-hidden border border-[rgba(10,13,18,0.12)] shadow-[0px_1px_1px_-0.5px_rgba(10,13,18,0.13),0px_1px_3px_rgba(10,13,18,0.1),0px_1px_2px_rgba(10,13,18,0.06)]"
+              style={{
+                backgroundImage:
+                  'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(10, 13, 18, 0.2) 100%), linear-gradient(90deg, #fff 0%, #fff 100%)',
+              }}
+            >
+              <img src={logoImage} alt="" className="w-full h-full object-cover pointer-events-none" />
+              <div className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0px_-0.5px_0.5px_0px_rgba(10,13,18,0.1)]" />
             </div>
           </div>
           <div className="mt-4 px-3 flex flex-col items-center gap-[2px]">
             {sidebarIcons.map((icon, index) => (
               <button
-                key={icon}
+                key={`${icon.src}-${index}`}
                 className="w-10 h-10 rounded-md flex items-center justify-center"
                 style={{ background: index === activeIndex ? '#fafafa' : 'transparent' }}
                 aria-label="Primary navigation item"
                 type="button"
               >
-                <img src={icon} alt="" className="w-5 h-5" />
+                <span
+                  className="flex items-center justify-center shrink-0 pointer-events-none"
+                  style={{
+                    width: 20,
+                    height: 20,
+                  }}
+                >
+                  <img
+                    src={icon.src}
+                    alt=""
+                    className="w-auto h-auto max-w-full max-h-full object-contain block"
+                  />
+                </span>
               </button>
             ))}
           </div>
         </div>
-
-        <div className="pb-5">
-          <div className="relative w-10 h-10 rounded-full border border-[rgba(0,0,0,0.08)] overflow-hidden">
-            <img src={userAvatar} alt="" className="w-full h-full object-cover" />
-            <span className="absolute right-0 bottom-0 w-2.5 h-2.5 rounded-full bg-[#17b26a] border-[1.5px] border-white" />
+        <div className="w-full px-3 pb-5 flex justify-center">
+          <div className="relative w-10 h-10 rounded-full border border-[rgba(0,0,0,0.08)] overflow-visible">
+            <img src={userAvatar} alt="" className="w-full h-full object-cover rounded-full pointer-events-none" />
+            <span className="absolute -right-px -bottom-px w-2.5 h-2.5 rounded-full border-[1.5px] border-white bg-[#17b26a]" />
           </div>
         </div>
       </div>

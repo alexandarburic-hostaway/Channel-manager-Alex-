@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui'
+import { LinkRegularIcon } from './ActionIcons'
 
 interface HeaderTab {
   key: string
@@ -119,9 +120,13 @@ export function PageHeader({
             </nav>
             {actionLabel && onActionClick && (
               <Button onClick={onActionClick} className="shrink-0">
-                <svg className="w-5 h-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
+                {actionLabel.toLowerCase().includes('connect') ? (
+                  <LinkRegularIcon className="w-5 h-5 mr-1.5" />
+                ) : (
+                  <svg className="w-5 h-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                )}
                 {actionLabel}
               </Button>
             )}

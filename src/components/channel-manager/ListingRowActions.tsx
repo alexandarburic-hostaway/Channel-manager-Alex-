@@ -34,32 +34,32 @@ export function ListingRowActions({
         type="button"
         variant="ghost"
         size="sm"
-        className="w-8 h-8 p-1.5 text-[#717680] hover:bg-[#f9fafb]"
+        className="w-9 h-9 p-1.5 text-[#717680] hover:bg-[#f9fafb]"
         onClick={primaryAction.onClick}
         aria-label={primaryAction.ariaLabel}
         disabled={primaryAction.disabled}
       >
-        <primaryAction.Icon className={`w-5 h-5 ${integrationStatus === 'importing' ? 'animate-spin' : ''}`} />
+        <primaryAction.Icon className={`w-6 h-6 ${integrationStatus === 'importing' ? 'animate-spin' : ''}`} />
       </Button>
       <Button
         type="button"
         variant="ghost"
         size="sm"
-        className="w-8 h-8 p-1.5 text-[#717680] hover:bg-[#f9fafb]"
+        className="w-9 h-9 p-1.5 text-[#717680] hover:bg-[#f9fafb]"
         onClick={onToggleVisibility}
         aria-label={channelStatus === 'hidden_from_guests' ? 'Make listing live' : 'Hide listing'}
       >
         {channelStatus === 'hidden_from_guests' ? (
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
             <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
             <circle cx="12" cy="12" r="3" />
           </svg>
         ) : (
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
             <path d="M3 3l18 18" />
-            <path d="M10.6 10.6a3 3 0 0 0 4.24 4.24" />
-            <path d="M9.9 5.2A11.7 11.7 0 0 1 12 5c6.5 0 10 7 10 7a19.2 19.2 0 0 1-3.1 3.8" />
-            <path d="M6.3 6.3C3.8 8.1 2 12 2 12s3.5 7 10 7c1.8 0 3.4-.5 4.8-1.2" />
+            <path d="M10.58 10.58A2 2 0 0 0 13.42 13.42" />
+            <path d="M9.88 5.09A10.94 10.94 0 0 1 12 4.9c5.52 0 9.4 5.1 10.2 6.3a1.3 1.3 0 0 1 0 1.4 17.23 17.23 0 0 1-3.3 3.7" />
+            <path d="M6.61 6.61A17.77 17.77 0 0 0 1.8 11.2a1.3 1.3 0 0 0 0 1.4C2.6 13.8 6.48 18.9 12 18.9c1.86 0 3.49-.57 4.89-1.4" />
           </svg>
         )}
       </Button>

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import {
   PageShell,
   AccountTable,
@@ -18,7 +18,10 @@ import type { Listing } from '@/types/channel'
 
 export function ChannelManagerPage() {
   const navigate = useNavigate()
-  const [activeTab, setActiveTab] = useState<'connected' | 'channels'>('connected')
+  const [searchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState<'connected' | 'channels'>(
+    searchParams.get('tab') === 'channels' ? 'channels' : 'connected'
+  )
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedAccountIds, setSelectedAccountIds] = useState<Set<string>>(new Set())
   const [connectedFilters, setConnectedFilters] = useState<TableFilterValue>({

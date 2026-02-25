@@ -33,7 +33,7 @@ export function Modal({ open, onClose, title, children, footer, size = 'md' }: M
         aria-hidden="true"
       />
       <div
-        className={`relative z-10 bg-background rounded-lg shadow-lg flex flex-col motion-enter-lift ${sizes[size]} ${size === 'full' ? 'h-[90vh]' : ''}`}
+        className={`relative z-10 bg-white rounded-lg shadow-lg flex flex-col motion-enter-lift ${sizes[size]} ${size === 'full' ? 'h-[90vh]' : ''}`}
       >
         {title && (
           <div className="flex items-center justify-between px-6 py-4 border-b border-border">

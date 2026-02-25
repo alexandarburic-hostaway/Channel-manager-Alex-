@@ -27,13 +27,13 @@ export function AccountDetailsHeader({
     <div className="px-6 py-6 border-b border-border">
       <div className="flex items-start gap-4">
         <div
-          className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{ backgroundColor: `${channel.brandColor}20` }}
+          className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden"
+          style={{ backgroundColor: 'transparent' }}
         >
           <img
             src={channel.logo}
             alt=""
-            className="w-8 h-8 object-contain"
+            className="w-full h-full object-cover"
             onError={(e) => {
               e.currentTarget.style.display = 'none'
               e.currentTarget.nextElementSibling?.classList.remove('hidden')
@@ -85,6 +85,7 @@ function formatStatus(s: IntegrationStatus): string {
     pending: 'Pending',
     connecting: 'Connecting…',
     pending_import: 'Pending import',
+    pending_export: 'Pending export',
     importing: 'Importing…',
     connected: 'Connected',
     ready_to_export: 'Ready to export',

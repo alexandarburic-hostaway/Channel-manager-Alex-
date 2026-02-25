@@ -117,7 +117,10 @@ export function ListingsTable({
                   {getChannelListingId(row, index)}
                 </td>
                 <td className="bg-white px-6 group-hover:bg-[#fcfcfd]">
-                  <AirbnbStatusBadge status={row.channelStatus ?? 'live'} />
+                  <AirbnbStatusBadge
+                    status={row.channelStatus ?? 'live'}
+                    muted={row.integrationStatus === 'pending_export' || row.integrationStatus === 'exporting'}
+                  />
                 </td>
                 <td className="bg-white px-6 group-hover:bg-[#fcfcfd]">
                   <StatusBadge status={row.integrationStatus} />
@@ -130,9 +133,9 @@ export function ListingsTable({
                 <td className="bg-white px-6 text-[14px] leading-5 text-[#535862] group-hover:bg-[#fcfcfd]">
                   {hostawayId}
                 </td>
-                <td className="sticky right-0 z-20 bg-white px-3 relative group-hover:bg-[#fcfcfd]">
+                <td className="sticky right-0 z-20 bg-white px-6 relative group-hover:bg-[#fcfcfd]">
                   <div className="absolute inset-y-0 -left-6 w-6 bg-gradient-to-l from-white to-transparent group-hover:from-[#fcfcfd]" />
-                  <div className="flex justify-center translate-x-2 opacity-0 pointer-events-none transition-all duration-250 ease-out group-hover:translate-x-0 group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:translate-x-0 group-focus-within:opacity-100 group-focus-within:pointer-events-auto">
+                  <div className="absolute right-6 top-1/2 -translate-y-1/2 translate-x-2 inline-flex items-center gap-0.5 opacity-0 pointer-events-none transition-all duration-250 ease-out group-hover:translate-x-0 group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:translate-x-0 group-focus-within:opacity-100 group-focus-within:pointer-events-auto">
                     <ListingRowActions
                       integrationStatus={row.integrationStatus}
                       channelStatus={row.channelStatus}

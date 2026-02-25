@@ -59,17 +59,16 @@ export function TableFilter({ types, value, onChange }: TableFilterProps) {
   )
 
   const chips = useMemo(() => {
-    return types.flatMap((type) => {
-      const selected = value[type.id] ?? []
-      return selected.map((entry) => {
-        const option = type.options.find((item) => item.value === entry)
+    return types
+      .map((type) => {
+        const selectedCount = (value[type.id] ?? []).length
+        if (selectedCount < 1) return null
         return {
           typeId: type.id,
-          value: entry,
-          label: option ? `${type.label}: ${option.label}` : `${type.label}: ${entry}`,
+          label: `${type.label}: ${selectedCount}`,
         }
       })
-    })
+      .filter((chip): chip is { typeId: string; label: string } => Boolean(chip))
   }, [types, value])
 
   const activeType = types.find((type) => type.id === activeTypeId) ?? types[0]
@@ -103,9 +102,9 @@ export function TableFilter({ types, value, onChange }: TableFilterProps) {
     onChange(Object.fromEntries(types.map((type) => [type.id, []])) as TableFilterValue)
   }
 
-  const removeChip = (typeId: string, optionValue: string) => {
+  const removeChip = (typeId: string) => {
     const next = toSetMap(value)
-    next[typeId]?.delete(optionValue)
+    next[typeId] = new Set()
     onChange(toArrayMap(next))
   }
 
@@ -124,11 +123,11 @@ export function TableFilter({ types, value, onChange }: TableFilterProps) {
 
       {chips.map((chip) => (
         <span
-          key={`${chip.typeId}:${chip.value}`}
+          key={chip.typeId}
           className="inline-flex h-9 items-center gap-1 rounded-lg border border-[#d5d7da] bg-[#fafafa] px-3 text-[14px] font-semibold leading-5 text-[#414651] motion-enter-lift"
         >
           {chip.label}
-          <button type="button" className="text-[#717680] hover:text-[#414651]" onClick={() => removeChip(chip.typeId, chip.value)} aria-label={`Remove ${chip.label}`}>
+          <button type="button" className="text-[#717680] hover:text-[#414651]" onClick={() => removeChip(chip.typeId)} aria-label={`Remove ${chip.label}`}>
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M6 6l12 12M18 6L6 18" />
             </svg>

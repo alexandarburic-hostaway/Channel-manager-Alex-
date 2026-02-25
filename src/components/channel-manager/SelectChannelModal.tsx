@@ -67,15 +67,15 @@ export function SelectChannelModal({ open, onClose, onSelect }: SelectChannelMod
           boxShadow: '0 24px 48px -12px rgba(10, 13, 18, 0.18)',
         }}
       >
-        <div className="flex flex-col flex-1 min-h-0" style={{ padding: 24, gap: 16 }}>
-          <div className="flex flex-col" style={{ gap: 4 }}>
+        <div className="flex flex-col flex-1 min-h-0" style={{ padding: 24 }}>
+          <div className="flex flex-col border-b border-[#e9eaeb] pb-4" style={{ gap: 4 }}>
             <h2 style={{ fontSize: 18, lineHeight: '28px', fontWeight: 600, color: '#181d27' }}>Connect an account</h2>
             <p style={{ fontSize: 14, lineHeight: '20px', fontWeight: 400, color: '#535861' }}>
               Start your new listing by choosing how you want to add the property details.
             </p>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 2, marginTop: 16 }}>
             <span
               style={{
                 fontSize: 14,
@@ -89,7 +89,7 @@ export function SelectChannelModal({ open, onClose, onSelect }: SelectChannelMod
             <span style={{ color: '#008380', fontSize: 14, lineHeight: '20px' }}>*</span>
           </div>
 
-          <div className="flex flex-col flex-1 min-h-0 overflow-y-auto pr-1" style={{ gap: 8 }}>
+          <div className="flex flex-col flex-1 min-h-0 overflow-y-auto pr-1" style={{ gap: 8, marginTop: 6 }}>
             {channels.map((channel) => {
               const isSelected = selectedId === channel.id
               const hasLogo = Boolean(channel.logo)
@@ -139,14 +139,15 @@ export function SelectChannelModal({ open, onClose, onSelect }: SelectChannelMod
                     style={{
                       width: 32,
                       height: 32,
-                      background: channel.id === 'ical' ? '#00b8d9' : `${channel.brandColor}1f`,
+                      overflow: 'hidden',
+                      background: channel.id === 'ical' ? '#00b8d9' : 'transparent',
                     }}
                   >
                     {hasLogo ? (
                       <img
                         src={channel.logo}
                         alt=""
-                        style={{ width: 20, height: 20, objectFit: 'contain' }}
+                        style={{ width: 32, height: 32, objectFit: 'cover' }}
                         onError={(e) => {
                           e.currentTarget.style.display = 'none'
                         }}

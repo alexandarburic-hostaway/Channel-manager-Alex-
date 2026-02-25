@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
+  ExportIcon,
+  ExportModal,
   ImportIcon,
   LinkBrokenIcon,
   LinkRegularIcon,
@@ -8,14 +10,13 @@ import {
   ChannelIcon,
   ConnectionHelpSidebar,
   ConnectionIntermediatePanel,
-  ImportProgressToast,
   ListingsTable,
   PageShell,
   StatusBadge,
   TableFilter,
   type TableFilterValue,
 } from '@/components/channel-manager'
-import { Button, Toast } from '@/components/ui'
+import { Button, Modal, Toast } from '@/components/ui'
 import { getChannelById } from '@/config/channels'
 import { useChannelManagerContext } from '@/context/ChannelManagerContext'
 
@@ -25,14 +26,14 @@ export function AccountDetailsPage() {
   const {
     accounts,
     listings,
-    importToast,
     successToast,
     simulateConnection,
     startImport,
+    startExport,
+    removeAccount,
     setSuccessToast,
     setAccounts,
     setListings,
-    setImportToast,
   } = useChannelManagerContext()
 
   const account = accounts.find((a) => a.id === accountId)
@@ -43,7 +44,23 @@ export function AccountDetailsPage() {
     channel_status: [],
     integration_status: [],
   })
+  const [headerMenuOpen, setHeaderMenuOpen] = useState(false)
+  const [exportModalOpen, setExportModalOpen] = useState(false)
+  const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false)
+  const headerMenuRef = useRef<HTMLDivElement>(null)
   const selectAllRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (!headerMenuOpen) return
+    const onPointerDown = (event: MouseEvent) => {
+      if (!headerMenuRef.current) return
+      if (!headerMenuRef.current.contains(event.target as Node)) {
+        setHeaderMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', onPointerDown)
+    return () => document.removeEventListener('mousedown', onPointerDown)
+  }, [headerMenuOpen])
 
   const filteredListings = useMemo(() => {
     return accountListings.filter((listing) => {
@@ -77,7 +94,6 @@ export function AccountDetailsPage() {
   const listingsInHostaway = accountListings.filter((listing) => listing.integrationStatus === 'connected').length
   const listingsNotInHostaway = Math.max(0, accountListings.length - listingsInHostaway)
   const isConnectedState = account.status === 'connected'
-  const isImportingThisAccount = importToast.show && importToast.accountId === accountId
 
   const selectedCount = selectedIds.size
   const allSelected = filteredListings.length > 0 && selectedCount === filteredListings.length
@@ -183,9 +199,12 @@ export function AccountDetailsPage() {
     const integrationStatusLabelMap: Record<string, string> = {
       not_in_hostaway: 'Not in Hostaway',
       pending_import: 'Pending import',
+      pending_export: 'Pending export',
       importing: 'Importing...',
+      exporting: 'Exporting...',
       connected: 'Connected',
       disconnected: 'Disconnected',
+      missing_requirements: 'Missing requirements',
     }
     const integrationStatusOptions = Array.from(
       new Set(accountListings.map((listing) => listing.integrationStatus))
@@ -212,6 +231,28 @@ export function AccountDetailsPage() {
     setAccounts((prev) =>
       prev.map((item) => (item.id === accountId ? { ...item, email: value } : item))
     )
+  }
+
+  const openExportModalForAccount = () => {
+    setExportModalOpen(true)
+    setHeaderMenuOpen(false)
+  }
+
+  const goToChannelTab = () => {
+    setHeaderMenuOpen(false)
+    navigate('/?tab=channels')
+  }
+
+  const removeCurrentAccount = () => {
+    setHeaderMenuOpen(false)
+    setRemoveConfirmOpen(true)
+  }
+
+  const confirmRemoveCurrentAccount = () => {
+    if (!accountId) return
+    removeAccount(accountId)
+    setRemoveConfirmOpen(false)
+    navigate('/')
   }
 
   return (
@@ -256,7 +297,49 @@ export function AccountDetailsPage() {
               Listings not in Hostaway: <span className="text-[#181d27]">{listingsNotInHostaway}</span>
             </span>
           </div>
-          <div />
+          <div className="relative flex items-center gap-3" ref={headerMenuRef}>
+            <button
+              type="button"
+              onClick={() => setHeaderMenuOpen((prev) => !prev)}
+              className="inline-flex items-center gap-1.5 rounded-lg px-2 py-2 text-[14px] leading-5 font-semibold text-[#535862] hover:bg-[#f9fafb] transition-colors"
+              aria-haspopup="menu"
+              aria-expanded={headerMenuOpen}
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="5" cy="12" r="1.5" />
+                <circle cx="12" cy="12" r="1.5" />
+                <circle cx="19" cy="12" r="1.5" />
+              </svg>
+              More
+            </button>
+            {headerMenuOpen && (
+              <div
+                className="absolute right-0 top-[calc(100%+6px)] z-40 min-w-[180px] rounded-xl border border-[rgba(0,0,0,0.08)] bg-white p-1 shadow-[0px_12px_16px_-4px_rgba(10,13,18,0.08),0px_4px_6px_-2px_rgba(10,13,18,0.03),0px_2px_2px_-1px_rgba(10,13,18,0.04)]"
+                role="menu"
+              >
+                <button
+                  type="button"
+                  className="w-full rounded-lg px-3 py-2 text-left text-[14px] leading-5 font-medium text-[#414651] hover:bg-[#f9fafb]"
+                  onClick={goToChannelTab}
+                  role="menuitem"
+                >
+                  Go to channel
+                </button>
+                <button
+                  type="button"
+                  className="w-full rounded-lg px-3 py-2 text-left text-[14px] leading-5 font-medium text-[#b42318] hover:bg-[#fef3f2]"
+                  onClick={removeCurrentAccount}
+                  role="menuitem"
+                >
+                  Remove account
+                </button>
+              </div>
+            )}
+            <Button onClick={openExportModalForAccount} variant="outline" className="h-9">
+              <ExportIcon className="w-5 h-5 mr-1.5" />
+              {`Export to ${channel.name}`}
+            </Button>
+          </div>
         </div>
       </section>
 
@@ -325,23 +408,49 @@ export function AccountDetailsPage() {
         />
       )}
 
-      <ImportProgressToast
-        open={isImportingThisAccount}
-        current={importToast.current}
-        total={importToast.total}
-        onCancel={() => {
-          if (!accountId) return
-          setImportToast((prev) => ({ ...prev, show: false }))
-          setAccounts((prev) => prev.map((item) => (item.id === accountId ? { ...item, status: 'connected' } : item)))
-        }}
-      />
-
       <Toast
         open={successToast.show}
         title={successToast.message}
         variant="success"
         onClose={() => setSuccessToast({ show: false, message: '' })}
       />
+
+      <ExportModal
+        open={exportModalOpen}
+        onClose={() => setExportModalOpen(false)}
+        channel={channel}
+        listings={accountListings
+          .filter((listing) => listing.integrationStatus !== 'connected')
+          .map((listing) => ({
+          ...listing,
+          publishStatus: listing.publishStatus ?? 'draft',
+        }))}
+        onExport={(listingIds, visibilityById) => {
+          if (!accountId) return
+          setExportModalOpen(false)
+          startExport(accountId, listingIds, visibilityById)
+        }}
+      />
+
+      <Modal
+        open={removeConfirmOpen}
+        onClose={() => setRemoveConfirmOpen(false)}
+        title="Remove account"
+        footer={
+          <>
+            <Button type="button" onClick={() => setRemoveConfirmOpen(false)} variant="outline">
+              Cancel
+            </Button>
+            <Button type="button" onClick={confirmRemoveCurrentAccount} variant="destructive">
+              Remove account
+            </Button>
+          </>
+        }
+      >
+        <p className="text-[14px] leading-5 text-[#535862]">
+          This will remove the account and all associated listings data from Channel Manager.
+        </p>
+      </Modal>
     </PageShell>
   )
 }

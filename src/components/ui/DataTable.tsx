@@ -160,6 +160,7 @@ function formatStatus(s: IntegrationStatus): string {
     pending: 'Pending',
     connecting: 'Connecting…',
     pending_import: 'Pending import',
+    pending_export: 'Pending export',
     importing: 'Importing…',
     connected: 'Connected',
     ready_to_export: 'Ready to export',
