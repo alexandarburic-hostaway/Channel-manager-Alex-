@@ -12,7 +12,6 @@ const EXPORT_CANDIDATE_NAMES = [
 ]
 
 function generateRandomExportCandidates(count: number): Array<{ id: string; name: string }> {
-  const existing = new Set<string>()
   const names = [...EXPORT_CANDIDATE_NAMES].sort(() => Math.random() - 0.5)
   return Array.from({ length: count }, (_, i) => {
     const name = names[i % names.length] + (i >= names.length ? ` ${Math.floor(i / names.length) + 1}` : '')

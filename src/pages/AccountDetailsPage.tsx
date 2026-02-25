@@ -28,13 +28,11 @@ export function AccountDetailsPage() {
   const {
     accounts,
     listings,
-    successToast,
     simulateConnection,
     finalizeConnectionWithPlans,
     startImport,
     startExport,
     removeAccount,
-    setSuccessToast,
     setAccounts,
     setListings,
   } = useChannelManagerContext()

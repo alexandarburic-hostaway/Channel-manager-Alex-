@@ -136,9 +136,6 @@ export function Toast({
     return () => clearTimeout(timeoutId)
   }, [open, variant, onClose])
 
-  const isProgress = variant === 'progress'
-  const isSuccess = variant === 'success'
-
   return createPortal(
     <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2">
       <MotionPresence mode="wait">
