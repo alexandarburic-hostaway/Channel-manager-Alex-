@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Button, Modal } from '@/components/ui'
 import type { ChannelConfig } from '@/types/channel'
 import type { ChannelListingStatus } from '@/types/channel'
 import type { ConnectionCandidateRow } from '@/lib/connectionCandidates'
+import { ChannelAvatarCircle, HostawayAvatarCircle } from './TableColumnAvatar'
 
 type RowAction = 'import' | 'map' | 'do_nothing'
 
@@ -51,19 +52,54 @@ export function ConnectImportModal({
   hostawayOptions,
   onFinalize,
 }: ConnectImportModalProps) {
+  const isBookingOrVrbo = channel.id === 'booking' || channel.id === 'vrbo'
   const [actionByRowId, setActionByRowId] = useState<Record<string, RowAction>>({})
   const [mapByRowId, setMapByRowId] = useState<Record<string, string>>({})
 
+  useEffect(() => {
+    if (!open) return
+
+    if (!isBookingOrVrbo) {
+      setActionByRowId({})
+      setMapByRowId({})
+      return
+    }
+
+    const initialActions: Record<string, RowAction> = {}
+    const initialMaps: Record<string, string> = {}
+
+    rows.forEach((row, index) => {
+      if (index === 0) {
+        initialActions[row.id] = 'import'
+        return
+      }
+
+      initialActions[row.id] = 'map'
+      const siblingOption = hostawayOptions[index]?.name
+      const exactMatch = hostawayOptions.find((option) => option.name.toLowerCase() === row.name.toLowerCase())?.name
+      initialMaps[row.id] = exactMatch ?? siblingOption ?? row.name
+    })
+
+    setActionByRowId(initialActions)
+    setMapByRowId(initialMaps)
+  }, [open, rows, hostawayOptions, isBookingOrVrbo])
+
   const plans = useMemo<ConnectionFinalizePlan[]>(() => {
-    return rows.map((row) => {
-      const action = actionByRowId[row.id] ?? 'import'
+    return rows.map((row, index) => {
+      const defaultAction = isBookingOrVrbo ? (index === 0 ? 'import' : 'map') : 'import'
+      const action = actionByRowId[row.id] ?? defaultAction
+
+      const siblingOption = hostawayOptions[index]?.name
+      const exactMatch = hostawayOptions.find((option) => option.name.toLowerCase() === row.name.toLowerCase())?.name
+      const defaultMappedName = exactMatch ?? siblingOption ?? row.name
+
       return {
         rowId: row.id,
         action,
-        mappedHostawayName: action === 'map' ? mapByRowId[row.id] ?? row.name : undefined,
+        mappedHostawayName: action === 'map' ? mapByRowId[row.id] ?? defaultMappedName : undefined,
       }
     })
-  }, [rows, actionByRowId, mapByRowId])
+  }, [rows, actionByRowId, mapByRowId, hostawayOptions, isBookingOrVrbo])
 
   const handleFinalize = () => {
     onFinalize(plans)
@@ -71,7 +107,7 @@ export function ConnectImportModal({
   }
 
   return (
-    <Modal open={open} onClose={onClose} title={`Connect & Import listings to ${channel.name}`} size="full">
+    <Modal open={open} onClose={onClose} title={`Map & Import listings to ${channel.name}`} size="full">
       <div className="flex flex-col h-full">
         <div className="pb-4">
           <h3 className="text-[18px] leading-7 font-semibold text-[#181d27]">Select how to handle listings from this account</h3>
@@ -83,10 +119,20 @@ export function ConnectImportModal({
 
         <div className="flex-1 overflow-auto border border-[#e9eaeb] rounded-lg">
           <table className="w-full min-w-[980px] table-fixed border-collapse">
+            <colgroup>
+              <col style={{ width: 280 }} />
+              <col style={{ width: 120 }} />
+              <col style={{ width: 140 }} />
+              <col style={{ width: 140 }} />
+              <col style={{ width: 300 }} />
+            </colgroup>
             <thead>
               <tr className="border-b border-[#e9eaeb] bg-[#fafafa]">
                 <th className="sticky left-0 z-30 bg-[#fafafa] px-6 py-3 text-left text-[12px] leading-[18px] font-semibold text-[#414651]">
-                  {channel.name} listing
+                  <div className="flex items-center" style={{ gap: 6 }}>
+                    <ChannelAvatarCircle channelId={channel.id} size={18} />
+                    <span>{channel.name} listing</span>
+                  </div>
                 </th>
                 <th className="px-6 py-3 text-left text-[12px] leading-[18px] font-semibold text-[#414651]">
                   ID
@@ -98,14 +144,21 @@ export function ConnectImportModal({
                   Action
                 </th>
                 <th className="px-6 py-3 text-left text-[12px] leading-[18px] font-semibold text-[#414651]">
-                  Hostaway listing
+                  <div className="flex items-center" style={{ gap: 6 }}>
+                    <HostawayAvatarCircle size={18} />
+                    <span>Hostaway listing</span>
+                  </div>
                 </th>
               </tr>
             </thead>
             <tbody>
               {rows.map((row) => {
-                const action = actionByRowId[row.id] ?? 'import'
-                const selectedMap = mapByRowId[row.id] ?? row.name
+                const rowIndex = rows.findIndex((candidate) => candidate.id === row.id)
+                const defaultAction = isBookingOrVrbo ? (rowIndex === 0 ? 'import' : 'map') : 'import'
+                const action = actionByRowId[row.id] ?? defaultAction
+                const siblingOption = hostawayOptions[rowIndex]?.name
+                const exactMatch = hostawayOptions.find((option) => option.name.toLowerCase() === row.name.toLowerCase())?.name
+                const selectedMap = mapByRowId[row.id] ?? exactMatch ?? siblingOption ?? row.name
                 return (
                   <tr key={row.id} className="border-b border-[#e9eaeb]">
                     <td className="sticky left-0 z-20 bg-white px-6 py-3 text-[14px] leading-5 text-[#181d27]">
@@ -118,15 +171,27 @@ export function ConnectImportModal({
                     <td className="px-6 py-3">
                       <select
                         value={action}
-                        onChange={(event) =>
-                          setActionByRowId((prev) => ({
-                            ...prev,
-                            [row.id]: event.target.value as RowAction,
-                          }))
-                        }
-                        className="inline-flex h-9 items-center rounded-lg border border-[#d5d7da] bg-white px-3 text-[14px] leading-5 text-[#535862] outline-none"
+                        onChange={(event) => {
+                          const nextAction = event.target.value as RowAction
+                          setActionByRowId((prev) => ({ ...prev, [row.id]: nextAction }))
+
+                          if (isBookingOrVrbo && nextAction === 'map') {
+                            setMapByRowId((prev) => {
+                              if (prev[row.id]) return prev
+                              const sibling = hostawayOptions[rowIndex]?.name
+                              const exact = hostawayOptions.find((option) => option.name.toLowerCase() === row.name.toLowerCase())?.name
+                              return {
+                                ...prev,
+                                [row.id]: exact ?? sibling ?? row.name,
+                              }
+                            })
+                          }
+                        }}
+                        className="inline-flex h-9 items-center rounded-lg border border-[#d5d7da] bg-white px-3 py-0 text-[14px] leading-5 text-[#181d27] outline-none"
                       >
-                        <option value="import">Import</option>
+                        <option value="import">
+                          Import
+                        </option>
                         <option value="map">Map</option>
                         <option value="do_nothing">Do nothing</option>
                       </select>
@@ -141,7 +206,7 @@ export function ConnectImportModal({
                               [row.id]: event.target.value,
                             }))
                           }
-                          className="inline-flex h-9 min-w-[280px] items-center rounded-lg border border-[#d5d7da] bg-white px-3 text-[14px] leading-5 text-[#535862] outline-none"
+                          className="inline-flex h-9 min-w-[280px] items-center rounded-lg border border-[#d5d7da] bg-white px-3 py-0 text-[14px] leading-5 text-[#181d27] outline-none"
                         >
                           {[{ id: 'same-name', name: row.name }, ...hostawayOptions].map((option) => (
                             <option key={`${row.id}-${option.id}-${option.name}`} value={option.name}>

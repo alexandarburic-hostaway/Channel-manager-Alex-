@@ -29,12 +29,12 @@ export interface PrimarySidebarProps {
 
 export function PrimarySidebar({ activeIndex = 4 }: PrimarySidebarProps) {
   return (
-    <aside className="w-[68px] shrink-0 p-1 h-[calc(100vh-16px)] sticky top-2 self-start bg-transparent">
+    <aside className="w-[72px] shrink-0 py-1 h-[calc(100vh-16px)] sticky top-2 self-start bg-transparent">
       <div className="h-full rounded-xl bg-transparent flex flex-col items-center justify-between">
-        <div className="w-full pt-5">
+        <div className="w-full pt-3">
           <div className="px-3">
             <div
-              className="relative w-8 h-8 rounded-lg overflow-hidden border border-[rgba(10,13,18,0.12)] shadow-[0px_1px_1px_-0.5px_rgba(10,13,18,0.13),0px_1px_3px_rgba(10,13,18,0.1),0px_1px_2px_rgba(10,13,18,0.06)]"
+              className="relative w-8 h-8 rounded-lg overflow-hidden border border-[rgba(10,13,18,0.12)] shadow-[0px_1px_1px_-0.5px_rgba(10,13,18,0.13),0px_1px_3px_rgba(10,13,18,0.1),0px_1px_2px_rgba(10,13,18,0.06)] m-auto"
               style={{
                 backgroundImage:
                   'linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(10, 13, 18, 0.2) 100%), linear-gradient(90deg, #fff 0%, #fff 100%)',

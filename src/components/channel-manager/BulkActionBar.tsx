@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import { Button } from '@/components/ui'
 import { MotionPresence, SlideUp } from '@/lib/motion'
 
 interface BulkAction {
@@ -19,20 +18,21 @@ export function BulkActionBar({ count, actions }: BulkActionBarProps) {
       {count > 0 ? (
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50">
           <SlideUp distance={16} duration="slow">
-            <div className="h-[68px] rounded-xl bg-[#181d27] px-6 py-4 flex items-center gap-6 shadow-[0px_2px_12px_rgba(0,0,0,0.42)]">
-              <span className="text-[14px] leading-5 font-medium text-white">{count} selected</span>
-              <div className="inline-flex items-center gap-2">
+            <div className="rounded-xl bg-[#181d27] pl-4 pr-4 py-2 flex items-center gap-6 shadow-[0px_12px_16px_rgba(10,13,18,0.08),0px_4px_6px_rgba(10,13,18,0.03),0px_2px_2px_rgba(10,13,18,0.04)]">
+              <span className="text-[14px] leading-5 font-medium text-white shrink-0">{count} selected</span>
+              <div className="flex items-center gap-4">
                 {actions.map((action) => (
-                  <Button
+                  <button
                     key={action.label}
                     type="button"
                     onClick={action.onClick}
-                    variant="outline"
-                    className="h-9 border-[#d5d7da] bg-white text-[#414651] hover:bg-[#f9fafb]"
+                    className="inline-flex h-9 items-center justify-center gap-1 rounded-lg border-0 bg-transparent px-2 py-0 text-[14px] font-semibold leading-5 text-white transition-[color,background-color] duration-[120ms] ease-[var(--motion-ease-default)] hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#181d27]"
                   >
-                    <span className="w-5 h-5 mr-1 inline-flex items-center justify-center">{action.icon}</span>
+                    <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center text-[#A4A7AE] [&>svg]:h-5 [&>svg]:w-5 [&>svg]:shrink-0">
+                      {action.icon}
+                    </span>
                     {action.label}
-                  </Button>
+                  </button>
                 ))}
               </div>
             </div>

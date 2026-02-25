@@ -18,7 +18,7 @@ export function Modal({ open, onClose, title, children, footer, size = 'md' }: M
     sm: 'max-w-md',
     md: 'max-w-lg',
     lg: 'max-w-2xl',
-    full: 'max-w-[90vw] max-h-[90vh] w-full',
+    full: 'w-screen h-screen max-w-none max-h-none',
   }
 
   return createPortal(
@@ -70,7 +70,7 @@ function MotionModalContainer({
             transition={{ duration: motionTokens.duration.normal, ease: motionTokens.easing.default }}
           />
           <motion.div
-            className={`relative z-10 bg-white rounded-lg shadow-lg flex flex-col ${sizeClass} ${isFull ? 'h-[90vh]' : ''}`}
+            className={`relative z-10 bg-white shadow-lg flex flex-col ${sizeClass} ${isFull ? 'rounded-none' : 'rounded-lg'}`}
             initial={reduceMotion ? false : { opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={reduceMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}

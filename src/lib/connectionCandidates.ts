@@ -46,10 +46,12 @@ export function createConnectionCandidates(accountId: string) {
 }
 
 export function createHostawayMapOptions(candidates: ConnectionCandidateRow[]) {
-  const options = shuffle(BARCELONA_NAMES).slice(0, 8)
-  return candidates.map((row, index) => ({
+  const candidateNames = [...new Set(candidates.map((c) => c.name))]
+  const otherNames = shuffle(BARCELONA_NAMES.filter((n) => !candidateNames.includes(n))).slice(0, Math.max(0, 8 - candidateNames.length))
+  const allNames = [...candidateNames, ...otherNames].slice(0, 8)
+  return allNames.map((name, index) => ({
     id: `hostaway-${index + 1}`,
-    name: options[index] ?? row.name,
+    name,
   }))
 }
 

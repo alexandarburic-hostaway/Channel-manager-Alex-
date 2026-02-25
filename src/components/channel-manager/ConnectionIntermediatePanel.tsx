@@ -57,12 +57,12 @@ export function ConnectionIntermediatePanel({
 
         <div className="mt-5 h-px bg-[#e9eaeb]" />
 
-        <div className="mt-5 space-y-5">
-          <div className="flex flex-col md:flex-row md:items-start gap-3 md:gap-8">
-            <label className="text-[14px] leading-5 font-semibold text-[#414651] md:w-[280px] shrink-0">
+        <div className="mt-6 grid grid-cols-1 gap-4 max-w-[480px]">
+          <div>
+            <label className="text-[14px] leading-5 font-medium text-[#344054]">
               Booking.com Legal entity ID <span className="text-[#339c99]">*</span>
             </label>
-            <div className="relative flex-1">
+            <div className="relative mt-1">
               <Input
                 value={legalEntityId}
                 onChange={(event) => setLegalEntityId(event.target.value)}
@@ -78,13 +78,11 @@ export function ConnectionIntermediatePanel({
             </div>
           </div>
 
-          <div className="h-px bg-[#e9eaeb]" />
-
-          <div className="flex flex-col md:flex-row md:items-start gap-3 md:gap-8">
-            <label className="text-[14px] leading-5 font-semibold text-[#414651] md:w-[280px] shrink-0">
+          <div>
+            <label className="text-[14px] leading-5 font-medium text-[#344054]">
               Account name in Hostaway <span className="text-[#339c99]">*</span>
             </label>
-            <div className="relative flex-1">
+            <div className="relative mt-1">
               <Input
                 value={bookingAccountName}
                 onChange={(event) => handleBookingAccountNameChange(event.target.value)}
@@ -100,11 +98,11 @@ export function ConnectionIntermediatePanel({
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row md:items-start gap-3 md:gap-8">
-            <label className="text-[14px] leading-5 font-semibold text-[#414651] md:w-[280px] shrink-0">
+          <div>
+            <label className="text-[14px] leading-5 font-medium text-[#344054]">
               Account email <span className="text-[#339c99]">*</span>
             </label>
-            <div className="relative flex-1">
+            <div className="relative mt-1">
               <Input value={email} onChange={(event) => onEmailChange(event.target.value)} className="h-9 pr-10 pl-10 text-[14px] leading-5" />
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#98a2b3]">
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -127,17 +125,24 @@ export function ConnectionIntermediatePanel({
 
         <Button className="mt-5 h-9 px-3 text-sm leading-5" onClick={onConnect}>
           <LinkRegularIcon className="w-5 h-5 mr-1.5" />
-          Connect account
+          Map & Import listings
         </Button>
       </section>
     )
   }
 
+  const isVrbo = channel.id === 'vrbo'
+  const useMapLabel = isBooking || isVrbo
+
   return (
     <section className="rounded-xl border border-[#e9eaeb] bg-white px-6 py-6 shadow-[0px_1px_2px_rgba(10,13,18,0.05)]">
-      <h2 className="text-[18px] leading-[28px] font-semibold text-[#181d27]">Connect your {channel.name} account</h2>
+      <h2 className="text-[18px] leading-[28px] font-semibold text-[#181d27]">
+        {useMapLabel ? `Map your ${channel.name} account` : `Connect your ${channel.name} account`}
+      </h2>
       <p className="mt-1 text-[14px] leading-5 text-[#667085]">
-        Complete these details and connect the account. Listings will be loaded after successful connection.
+        {useMapLabel
+          ? 'Complete these details and map the account. Listings will be loaded for mapping after connection.'
+          : 'Complete these details and connect the account. Listings will be loaded after successful connection.'}
       </p>
       <div className="mt-6 grid grid-cols-1 gap-4 max-w-[480px]">
         <div>
@@ -151,7 +156,7 @@ export function ConnectionIntermediatePanel({
       </div>
       <Button className="mt-6" onClick={onConnect}>
         <LinkRegularIcon className="w-5 h-5 mr-1.5" />
-        Connect
+        {useMapLabel ? 'Map & Import listings' : 'Connect account'}
       </Button>
     </section>
   )

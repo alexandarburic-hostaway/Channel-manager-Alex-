@@ -219,7 +219,7 @@ export function SelectChannelModal({ open, onClose, onSelect }: SelectChannelMod
               border: `1px solid ${selectedId ? '#181d27' : '#e4e7ec'}`,
             }}
           >
-            Start connection
+            Continue
           </Button>
         </div>
       </div>

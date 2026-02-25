@@ -49,7 +49,7 @@ export function AccountTable({
         </colgroup>
         <thead>
           <tr className="bg-[#fafafa] border-b border-[#e9eaeb]">
-            <th className="sticky left-0 z-30 h-11 px-3 text-center bg-[#fafafa]">
+            <th className="sticky left-0 z-30 h-11 pl-6 pr-3 text-center bg-[#fafafa]">
               <span className="flex h-5 w-5 items-center justify-center mx-auto">
                 <UiCheckbox
                   ref={(el) => {
@@ -61,10 +61,12 @@ export function AccountTable({
                 />
               </span>
             </th>
-            <th className="sticky left-[52px] z-30 h-11 px-6 text-left text-[12px] leading-[18px] font-semibold text-[#414651] bg-[#fafafa]">
+            <th className="sticky left-[52px] z-30 h-11 pl-0 pr-6 text-left text-[12px] leading-[18px] font-semibold text-[#414651] bg-[#fafafa]">
               Account
             </th>
-            <th className="h-11 px-6 text-left text-[12px] leading-[18px] font-semibold text-[#414651]">Channel</th>
+            <th className="h-11 px-6 text-left text-[12px] leading-[18px] font-semibold text-[#414651]">
+              Channel
+            </th>
             <th className="h-11 px-6 text-left text-[12px] leading-[18px] font-semibold text-[#414651]">Connection status</th>
             <th className="h-11 px-6 text-left text-[12px] leading-[18px] font-semibold text-[#414651]">Account listings</th>
             <th className="h-11 px-6 text-left text-[12px] leading-[18px] font-semibold text-[#414651]">Listings in Hostaway</th>
@@ -77,7 +79,7 @@ export function AccountTable({
             const channel = getChannelById(row.account.channelId)
             return (
               <tr key={row.account.id} className="group h-[72px] border-b border-[#e9eaeb]">
-                <td className="sticky left-0 z-20 px-3 text-center bg-white group-hover:bg-[#fcfcfd] transition-[background-color] duration-[120ms] ease-[var(--motion-ease-default)]">
+                <td className="sticky left-0 z-20 pl-6 pr-3 text-center bg-white group-hover:bg-[#fcfcfd] transition-[background-color] duration-[120ms] ease-[var(--motion-ease-default)]">
                   <span className="flex h-5 w-5 items-center justify-center mx-auto">
                     <UiCheckbox
                       checked={selectedAccountIds.has(row.account.id)}
@@ -86,10 +88,25 @@ export function AccountTable({
                     />
                   </span>
                 </td>
-                <td className="sticky left-[52px] z-20 px-6 bg-white group-hover:bg-[#fcfcfd] transition-[background-color] duration-[120ms] ease-[var(--motion-ease-default)]">
-                  <Link to={`/accounts/${row.account.id}`} className="block min-w-0">
-                    <p className="text-[14px] leading-5 font-semibold text-[#0086a8] truncate">{row.account.accountName}</p>
-                    <p className="text-[14px] leading-5 font-normal text-[#535862] truncate">{row.account.email}</p>
+                <td className="sticky left-[52px] z-20 pl-0 pr-6 bg-white group-hover:bg-[#fcfcfd] transition-[background-color] duration-[120ms] ease-[var(--motion-ease-default)]">
+                  <Link to={`/accounts/${row.account.id}`} className="flex items-center gap-3 min-w-0">
+                    <div className="w-8 h-8 shrink-0 rounded-full bg-white border border-[#e9eaeb] flex items-center justify-center overflow-hidden">
+                      {row.account.avatarUrl ? (
+                        <img
+                          src={row.account.avatarUrl}
+                          alt={row.account.accountName}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-[12px] font-semibold text-[#535862]">
+                          {row.account.accountName?.[0] ?? '?'}
+                        </span>
+                      )}
+                    </div>
+                    <div className="min-w-0 truncate">
+                      <p className="text-[14px] leading-5 font-semibold text-[#0086a8] truncate">{row.account.accountName}</p>
+                      <p className="text-[14px] leading-5 font-normal text-[#535862] truncate">{row.account.email}</p>
+                    </div>
                   </Link>
                 </td>
                 <td className="px-6">

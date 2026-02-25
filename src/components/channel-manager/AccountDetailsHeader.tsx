@@ -6,6 +6,7 @@ export interface AccountDetailsHeaderProps {
   channel: ChannelConfig
   accountName: string
   email: string
+  avatarUrl?: string | null
   status: IntegrationStatus
   accountListings: number
   synced: number
@@ -17,6 +18,7 @@ export function AccountDetailsHeader({
   channel,
   accountName,
   email,
+  avatarUrl,
   status,
   accountListings,
   synced,
@@ -26,23 +28,26 @@ export function AccountDetailsHeader({
   return (
     <div className="px-6 py-6 border-b border-border">
       <div className="flex items-start gap-4">
-        <div
-          className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden"
-          style={{ backgroundColor: 'transparent' }}
-        >
-          <img
-            src={channel.logo}
-            alt=""
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none'
-              e.currentTarget.nextElementSibling?.classList.remove('hidden')
-            }}
-          />
-          <div
-            className="hidden w-8 h-8 rounded"
-            style={{ backgroundColor: channel.brandColor }}
-          />
+        <div className="w-8 h-8 shrink-0 rounded-full bg-white border border-[#e9eaeb] flex items-center justify-center overflow-hidden">
+          {avatarUrl ? (
+            <img src={avatarUrl} alt={accountName} className="w-full h-full object-cover" />
+          ) : (
+            <>
+              <img
+                src={channel.logo}
+                alt=""
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                  e.currentTarget.nextElementSibling?.classList.remove('hidden')
+                }}
+              />
+              <div
+                className="hidden w-full h-full rounded-full"
+                style={{ backgroundColor: channel.brandColor }}
+              />
+            </>
+          )}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-3">

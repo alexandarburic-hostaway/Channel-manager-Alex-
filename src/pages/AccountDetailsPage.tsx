@@ -17,11 +17,10 @@ import {
   TableFilter,
   type TableFilterValue,
 } from '@/components/channel-manager'
-import { Button, Modal, Toast } from '@/components/ui'
+import { Button, Modal } from '@/components/ui'
 import { getChannelById } from '@/config/channels'
 import { useChannelManagerContext } from '@/context/ChannelManagerContext'
 import { createConnectionCandidates, createHostawayMapOptions, type ConnectionCandidateRow } from '@/lib/connectionCandidates'
-import { createBarcelonaExportCandidates } from '@/lib/exportCandidates'
 
 export function AccountDetailsPage() {
   const { accountId } = useParams<{ accountId: string }>()
@@ -55,9 +54,6 @@ export function AccountDetailsPage() {
   const [connectionCandidates, setConnectionCandidates] = useState<ConnectionCandidateRow[]>([])
   const headerMenuRef = useRef<HTMLDivElement>(null)
   const selectAllRef = useRef<HTMLInputElement>(null)
-  const [exportCandidates, setExportCandidates] = useState(() =>
-    accountId && channel ? createBarcelonaExportCandidates(accountId, channel.id) : []
-  )
 
   useEffect(() => {
     if (!headerMenuOpen) return
@@ -99,11 +95,6 @@ export function AccountDetailsPage() {
       </div>
     )
   }
-
-  useEffect(() => {
-    if (!accountId || !channel || !exportModalOpen) return
-    setExportCandidates(createBarcelonaExportCandidates(accountId, channel.id))
-  }, [accountId, channel, exportModalOpen])
 
   const listingsInHostaway = accountListings.filter((listing) => listing.integrationStatus === 'connected').length
   const listingsNotInHostaway = Math.max(0, accountListings.length - listingsInHostaway)
@@ -285,12 +276,14 @@ export function AccountDetailsPage() {
         </Button>
 
         <div className="mt-2.5 flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-white border border-[#e9eaeb] flex items-center justify-center overflow-hidden">
-            {channel.logo ? (
+          <div className="w-8 h-8 rounded-full bg-white border border-[#e9eaeb] flex items-center justify-center overflow-hidden shrink-0">
+            {account.avatarUrl ? (
+              <img src={account.avatarUrl} alt={account.accountName} className="w-full h-full object-cover" />
+            ) : channel?.logo ? (
               <img src={channel.logo} alt={channel.name} className="w-full h-full object-cover" />
-            ) : (
+            ) : channel ? (
               <ChannelIcon channelId={channel.id} size={32} />
-            )}
+            ) : null}
           </div>
           <h1 className="text-[20px] leading-[30px] font-semibold text-[#181d27]">
             {channel.name} • {account.accountName} ({account.email})
@@ -389,6 +382,7 @@ export function AccountDetailsPage() {
             />
           </div>
           <ListingsTable
+            channelId={channel.id}
             rows={filteredListings}
             selectedIds={selectedIds}
             allSelected={allSelected}
@@ -427,22 +421,15 @@ export function AccountDetailsPage() {
         />
       )}
 
-      <Toast
-        open={successToast.show}
-        title={successToast.message}
-        variant="success"
-        onClose={() => setSuccessToast({ show: false, message: '' })}
-      />
-
       <ExportModal
         open={exportModalOpen}
         onClose={() => setExportModalOpen(false)}
         channel={channel}
-        listings={exportCandidates}
-        onExport={(listingIds, visibilityById) => {
+        listings={accountListings}
+        onExport={(listingIds, visibilityById, newListings) => {
           if (!accountId) return
           setExportModalOpen(false)
-          startExport(accountId, listingIds, visibilityById)
+          startExport(accountId, listingIds, visibilityById, newListings, channel.id)
         }}
       />
 

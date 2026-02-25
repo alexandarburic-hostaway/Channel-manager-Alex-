@@ -14,7 +14,6 @@ import {
 import { Button, Input, Modal } from '@/components/ui'
 import { useChannelManagerContext } from '@/context/ChannelManagerContext'
 import { getChannelById } from '@/config/channels'
-import { createBarcelonaExportCandidates } from '@/lib/exportCandidates'
 import type { Listing } from '@/types/channel'
 
 export function ChannelManagerPage() {
@@ -40,7 +39,7 @@ export function ChannelManagerPage() {
     closeSelectChannel,
     handleSelectChannel,
     openExportModal,
-    executeExport,
+    startExport,
     setExportModalOpen,
     removeAccount,
   } = useChannelManagerContext()
@@ -167,10 +166,7 @@ export function ChannelManagerPage() {
     ? accounts.find((account) => account.id === exportAccountId) ?? null
     : null
   const exportChannel = exportAccount ? getChannelById(exportAccount.channelId) ?? null : null
-  const exportListings =
-    exportAccount && exportChannel
-      ? createBarcelonaExportCandidates(exportAccount.id, exportChannel.id)
-      : []
+  const exportListings = exportAccountId ? listings[exportAccountId] ?? [] : []
 
   return (
     <PageShell>
@@ -266,7 +262,7 @@ export function ChannelManagerPage() {
         </p>
       </Modal>
 
-      {exportChannel && (
+      {exportChannel && exportAccountId && (
         <ExportModal
           open={exportModalOpen}
           onClose={() => {
@@ -275,7 +271,18 @@ export function ChannelManagerPage() {
           }}
           channel={exportChannel}
           listings={exportListings}
-          onExport={executeExport}
+          onExport={(listingIds, visibilityById, newListings) => {
+            startExport(
+              exportAccountId,
+              listingIds,
+              visibilityById,
+              newListings,
+              exportChannel?.id
+            )
+            setExportModalOpen(false)
+            setExportAccountId(null)
+            navigate(`/accounts/${exportAccountId}`)
+          }}
         />
       )}
 

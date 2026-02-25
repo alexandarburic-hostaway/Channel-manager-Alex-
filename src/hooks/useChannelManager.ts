@@ -13,7 +13,7 @@ function getRandomProfile() {
   return MOCK_PROFILES[Math.floor(Math.random() * MOCK_PROFILES.length)]
 }
 
-const IMPORT_STEP_MS = 10_000
+const IMPORT_STEP_MS = 5_000
 
 export function useChannelManager() {
   const [accounts, setAccounts] = useState<ConnectedAccount[]>([])
@@ -308,44 +308,54 @@ export function useChannelManager() {
   }, [])
 
   const startExport = useCallback(
-    (accountId: string, listingIds: string[], visibilityById: Record<string, ChannelListingStatus>) => {
+    (
+      accountId: string,
+      listingIds: string[],
+      visibilityById: Record<string, ChannelListingStatus>,
+      newListings?: Array<{ id: string; name: string }>,
+      channelId?: string
+    ) => {
     const total = listingIds.length
     if (total === 0) return
 
     const queue = [...listingIds]
     const queuedIds = new Set(queue)
+    const newListingsMap = new Map((newListings ?? []).map((n) => [n.id, n]))
 
     setListings((prev) => {
       const existing = prev[accountId] ?? []
-      return {
-        ...prev,
-        [accountId]: existing.map((l) =>
-          queuedIds.has(l.id)
-            ? {
-                ...l,
-                integrationStatus:
-                  l.integrationStatus === 'missing_requirements'
-                    ? ('missing_requirements' as IntegrationStatus)
-                    : ('pending_export' as IntegrationStatus),
-                channelStatus: visibilityById[l.id] ?? l.channelStatus ?? 'hidden_from_guests',
-              }
-            : l
-        ),
-      }
+      const updated = existing.map((l) =>
+        queuedIds.has(l.id)
+          ? {
+              ...l,
+              integrationStatus:
+                l.integrationStatus === 'missing_requirements'
+                  ? ('missing_requirements' as IntegrationStatus)
+                  : ('pending_export' as IntegrationStatus),
+              channelStatus: visibilityById[l.id] ?? l.channelStatus ?? 'hidden_from_guests',
+            }
+          : l
+      )
+      return { ...prev, [accountId]: updated }
     })
 
     const eligibleQueue = queue.filter((listingId) => {
       const listing = (listings[accountId] ?? []).find((l) => l.id === listingId)
-      return listing?.integrationStatus !== 'missing_requirements'
+      if (listing) return listing.integrationStatus !== 'missing_requirements'
+      return newListingsMap.has(listingId)
     })
     const eligibleTotal = eligibleQueue.length
     if (eligibleTotal === 0) return
 
     setExportToast({ show: true, current: 0, total: eligibleTotal, accountId })
 
+    const accountChannelId = channelId ?? ''
+
     const markExporting = (listingId: string) => {
       setListings((prev) => {
         const existing = prev[accountId] ?? []
+        const isNew = newListingsMap.has(listingId)
+        if (isNew) return prev
         return {
           ...prev,
           [accountId]: existing.map((l) =>
@@ -356,8 +366,21 @@ export function useChannelManager() {
     }
 
     const markConnected = (listingId: string) => {
+      const newListing = newListingsMap.get(listingId)
       setListings((prev) => {
         const existing = prev[accountId] ?? []
+        if (newListing) {
+          const added: Listing = {
+            id: newListing.id,
+            name: newListing.name,
+            channelId: accountChannelId,
+            accountId,
+            integrationStatus: 'connected',
+            channelStatus: visibilityById[listingId] ?? 'hidden_from_guests',
+            channelListingId: `HA-${listingId.slice(-6)}`,
+          }
+          return { ...prev, [accountId]: [...existing, added] }
+        }
         return {
           ...prev,
           [accountId]: existing.map((l) =>

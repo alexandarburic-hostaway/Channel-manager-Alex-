@@ -1,10 +1,13 @@
 import type { RefObject } from 'react'
 import { Checkbox as UiCheckbox } from '@/components/ui'
+import { getChannelById } from '@/config/channels'
 import type { Listing } from '@/types/channel'
 import { AirbnbStatusBadge, StatusBadge } from './StatusBadge'
+import { ChannelAvatarCircle, HostawayAvatarCircle } from './TableColumnAvatar'
 import { ListingRowActions } from './ListingRowActions'
 
 interface ListingsTableProps {
+  channelId?: string
   rows: Listing[]
   selectedIds: Set<string>
   allSelected: boolean
@@ -19,6 +22,7 @@ interface ListingsTableProps {
 }
 
 export function ListingsTable({
+  channelId: channelIdProp,
   rows,
   selectedIds,
   allSelected,
@@ -34,6 +38,9 @@ export function ListingsTable({
   if (selectAllRef.current) {
     selectAllRef.current.indeterminate = someSelected
   }
+
+  const channelId = channelIdProp ?? rows[0]?.channelId ?? 'airbnb'
+  const channel = getChannelById(channelId)
 
   const getChannelListingId = (row: Listing, index: number) => row.channelListingId ?? `1234561${String(11 + index)}`
 
@@ -74,20 +81,32 @@ export function ListingsTable({
                     aria-label="Select all listings"
                   />
                 </span>
-                <span className="text-[12px] leading-[18px] font-semibold text-[#414651]">Airbnb listing</span>
+                {channel ? (
+                  <div className="flex items-center" style={{ gap: 6 }}>
+                    <ChannelAvatarCircle channelId={channelId} size={18} />
+                    <span className="text-[12px] leading-[18px] font-semibold text-[#414651]">
+                      {channel.name} listing
+                    </span>
+                  </div>
+                ) : (
+                  <span className="text-[12px] leading-[18px] font-semibold text-[#414651]">Airbnb listing</span>
+                )}
               </div>
             </th>
             <th className="h-11 bg-[#fafafa] px-6 text-left text-[12px] leading-[18px] font-semibold text-[#717680]">
-              Airbnb ID
+              {channel ? `${channel.name} ID` : 'Airbnb ID'}
             </th>
             <th className="h-11 bg-[#fafafa] px-6 text-left text-[12px] leading-[18px] font-semibold text-[#717680]">
-              Airbnb status
+              {channel ? `${channel.name} status` : 'Airbnb status'}
             </th>
             <th className="h-11 bg-[#fafafa] px-6 text-left text-[12px] leading-[18px] font-semibold text-[#717680]">
               Integration Status
             </th>
             <th className="h-11 bg-[#fafafa] px-6 text-left text-[12px] leading-[18px] font-semibold text-[#717680]">
-              Hostaway listing
+              <div className="flex items-center" style={{ gap: 6 }}>
+                <HostawayAvatarCircle size={18} />
+                <span className="text-[#414651]">Hostaway listing</span>
+              </div>
             </th>
             <th className="h-11 bg-[#fafafa] px-6 text-left text-[12px] leading-[18px] font-semibold text-[#717680]">
               Hostaway ID
