@@ -59,25 +59,25 @@ export function ConnectImportModal({
   useEffect(() => {
     if (!open) return
 
-    if (!isBookingOrVrbo) {
-      setActionByRowId({})
-      setMapByRowId({})
-      return
-    }
-
     const initialActions: Record<string, RowAction> = {}
     const initialMaps: Record<string, string> = {}
 
     rows.forEach((row, index) => {
-      if (index === 0) {
+      if (isBookingOrVrbo) {
+        if (index === 0) {
+          initialActions[row.id] = 'import'
+          return
+        }
+        initialActions[row.id] = 'map'
+        const siblingOption = hostawayOptions[index]?.name
+        const exactMatch = hostawayOptions.find((option) => option.name.toLowerCase() === row.name.toLowerCase())?.name
+        initialMaps[row.id] = exactMatch ?? siblingOption ?? row.name
+      } else {
         initialActions[row.id] = 'import'
-        return
+        const exactMatch = hostawayOptions.find((option) => option.name.toLowerCase() === row.name.toLowerCase())?.name
+        const siblingOption = hostawayOptions[index]?.name
+        initialMaps[row.id] = exactMatch ?? siblingOption ?? row.name
       }
-
-      initialActions[row.id] = 'map'
-      const siblingOption = hostawayOptions[index]?.name
-      const exactMatch = hostawayOptions.find((option) => option.name.toLowerCase() === row.name.toLowerCase())?.name
-      initialMaps[row.id] = exactMatch ?? siblingOption ?? row.name
     })
 
     setActionByRowId(initialActions)
@@ -110,7 +110,9 @@ export function ConnectImportModal({
     <Modal open={open} onClose={onClose} title={`Map & Import listings to ${channel.name}`} size="full">
       <div className="flex flex-col h-full">
         <div className="pb-4">
-          <h3 className="text-[18px] leading-7 font-semibold text-[#181d27]">Select how to handle listings from this account</h3>
+          <h3 className="text-[18px] leading-7 font-semibold text-[#181d27]">
+            Select how to handle listings from this account
+          </h3>
           <p className="mt-1 text-[14px] leading-5 text-[#535862]">
             Choose whether each channel listing should be imported as new, mapped to an existing Hostaway listing,
             or ignored for now.
@@ -175,7 +177,7 @@ export function ConnectImportModal({
                           const nextAction = event.target.value as RowAction
                           setActionByRowId((prev) => ({ ...prev, [row.id]: nextAction }))
 
-                          if (isBookingOrVrbo && nextAction === 'map') {
+                          if (nextAction === 'map') {
                             setMapByRowId((prev) => {
                               if (prev[row.id]) return prev
                               const sibling = hostawayOptions[rowIndex]?.name
@@ -189,9 +191,7 @@ export function ConnectImportModal({
                         }}
                         className="inline-flex h-9 items-center rounded-lg border border-[#d5d7da] bg-white px-3 py-0 text-[14px] leading-5 text-[#181d27] outline-none"
                       >
-                        <option value="import">
-                          Import
-                        </option>
+                        <option value="import">Import</option>
                         <option value="map">Map</option>
                         <option value="do_nothing">Do nothing</option>
                       </select>

@@ -1,8 +1,7 @@
 name: Deploy to GitHub Pages
 
+# Deploy only when run manually (Actions tab → Run workflow). Push to main does not publish.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:

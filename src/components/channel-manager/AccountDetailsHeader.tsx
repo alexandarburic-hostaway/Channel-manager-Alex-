@@ -25,11 +25,22 @@ export function AccountDetailsHeader({
   notSynced,
   isConnecting = false,
 }: AccountDetailsHeaderProps) {
+  const isConnected = [
+    'connected',
+    'published',
+    'ready_to_export',
+    'exporting',
+    'pending_import',
+    'importing',
+    'pending_export',
+  ].includes(status)
+  const showProfileImage = isConnected && avatarUrl
+
   return (
     <div className="px-6 py-6 border-b border-border">
       <div className="flex items-start gap-4">
         <div className="w-8 h-8 shrink-0 rounded-full bg-white border border-[#e9eaeb] flex items-center justify-center overflow-hidden">
-          {avatarUrl ? (
+          {showProfileImage ? (
             <img src={avatarUrl} alt={accountName} className="w-full h-full object-cover" />
           ) : (
             <>

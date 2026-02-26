@@ -28,7 +28,6 @@ export function AccountDetailsPage() {
   const {
     accounts,
     listings,
-    simulateConnection,
     finalizeConnectionWithPlans,
     startImport,
     startExport,
@@ -157,12 +156,8 @@ export function AccountDetailsPage() {
 
   const connectAccount = () => {
     if (!accountId) return
-    if (channel.id === 'booking' || channel.id === 'vrbo') {
-      setConnectionCandidates(createConnectionCandidates(accountId))
-      setConnectImportOpen(true)
-      return
-    }
-    simulateConnection(accountId, channel.id)
+    setConnectionCandidates(createConnectionCandidates(accountId))
+    setConnectImportOpen(true)
   }
 
   const connectSingle = (listingId: string) => {
@@ -275,7 +270,7 @@ export function AccountDetailsPage() {
 
         <div className="mt-2.5 flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-white border border-[#e9eaeb] flex items-center justify-center overflow-hidden shrink-0">
-            {account.avatarUrl ? (
+            {account.status === 'connected' && account.avatarUrl ? (
               <img src={account.avatarUrl} alt={account.accountName} className="w-full h-full object-cover" />
             ) : channel?.logo ? (
               <img src={channel.logo} alt={channel.name} className="w-full h-full object-cover" />
@@ -451,22 +446,20 @@ export function AccountDetailsPage() {
         </p>
       </Modal>
 
-      {(channel.id === 'booking' || channel.id === 'vrbo') && (
-        <ConnectImportModal
-          open={connectImportOpen}
-          onClose={() => setConnectImportOpen(false)}
-          channel={channel}
-          rows={connectionCandidates}
-          hostawayOptions={createHostawayMapOptions(connectionCandidates)}
-          onFinalize={(plans) => {
-            if (!accountId) return
-            const importIds = finalizeConnectionWithPlans(accountId, channel.id, connectionCandidates, plans)
-            if (importIds.length > 0) {
-              setTimeout(() => startImport(accountId, importIds), 0)
-            }
-          }}
-        />
-      )}
+      <ConnectImportModal
+        open={connectImportOpen}
+        onClose={() => setConnectImportOpen(false)}
+        channel={channel}
+        rows={connectionCandidates}
+        hostawayOptions={createHostawayMapOptions(connectionCandidates)}
+        onFinalize={(plans) => {
+          if (!accountId) return
+          const importIds = finalizeConnectionWithPlans(accountId, channel.id, connectionCandidates, plans)
+          if (importIds.length > 0) {
+            setTimeout(() => startImport(accountId, importIds), 0)
+          }
+        }}
+      />
     </PageShell>
   )
 }
